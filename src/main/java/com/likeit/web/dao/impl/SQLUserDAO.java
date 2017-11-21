@@ -51,7 +51,7 @@ public class SQLUserDAO implements UserDAO {
     }
 
     public User getUser(int id) throws DAOException {
-        User user = new User();
+        User user = null;
         prepareDatabase();
         try (Connection connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
              PreparedStatement preparedStatement = connection.prepareStatement(getUserById)) {
@@ -60,6 +60,7 @@ public class SQLUserDAO implements UserDAO {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
+                    user = new User();
                     user.setLogin(resultSet.getString(2));
                     user.setEmail(resultSet.getString(4));
                     user.setRegistrationDate(resultSet.getTimestamp(5).toLocalDateTime());
@@ -71,12 +72,11 @@ public class SQLUserDAO implements UserDAO {
         } catch (SQLException e) {
             throw new DAOException(DATABASE_OPERATIONS_EXCEPTION.getMessage(), e);
         }
-
         return user;
     }
 
     public User getUser(String login, String password) throws DAOException {
-        User user = new User();
+        User user = null;
         prepareDatabase();
         try (Connection connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
              PreparedStatement preparedStatement = connection.prepareStatement(getUserByLoginAndPassword)) {
@@ -86,6 +86,7 @@ public class SQLUserDAO implements UserDAO {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
+                    user = new User();
                     user.setLogin(resultSet.getString(2));
                     user.setEmail(resultSet.getString(4));
                     user.setRegistrationDate(resultSet.getTimestamp(5).toLocalDateTime());
@@ -94,7 +95,6 @@ public class SQLUserDAO implements UserDAO {
                     user.setRating(resultSet.getShort(8));
                 }
             }
-
         } catch (SQLException e) {
             throw new DAOException(DATABASE_OPERATIONS_EXCEPTION.getMessage(), e);
         }
@@ -104,20 +104,21 @@ public class SQLUserDAO implements UserDAO {
     public void saveUser(String login, String password, String email) throws DAOException {
         User user;
         user = getUser(login, password);
-        if (user.getLogin() == null || user.getLogin().isEmpty()) {
-            try (Connection connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-                 PreparedStatement preparedStatement = connection.prepareStatement(saveUser)) {
+        if (user != null) {
+            throw new DAOException(USER_ALREADY_EXISTS.getMessage());
+        }
+        try (Connection connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(saveUser)) {
 
-                preparedStatement.setString(1, login);
-                preparedStatement.setString(2, password);
-                preparedStatement.setString(3, email);
-                preparedStatement.setString(4, LocalDateTime.now().toString());
+            preparedStatement.setString(1, login);
+            preparedStatement.setString(2, password);
+            preparedStatement.setString(3, email);
+            preparedStatement.setString(4, LocalDateTime.now().toString());
 
-                preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
 
-            } catch (SQLException e) {
-                throw new DAOException(DATABASE_OPERATIONS_EXCEPTION.getMessage(), e);
-            }
+        } catch (SQLException e) {
+            throw new DAOException(DATABASE_OPERATIONS_EXCEPTION.getMessage(), e);
         }
     }
 
