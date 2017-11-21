@@ -1,0 +1,21 @@
+package main.java.com.likeit.web.dao.exception;
+
+public enum Exceptions {
+
+    DATABASE_OPERATIONS_EXCEPTION("Problems with database operations"),
+    UNABLE_OPEN_PROPERTY_FILE("Unable open properties file"),
+    MISSED_PROPERTY_FILE("Properties file not found"),
+    MISSED_JDBC_DRIVER("Can't find JDBC driver");
+
+
+    private String message;
+
+    Exceptions(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+}
