@@ -3,6 +3,7 @@ package main.java.com.likeit.web.controller.command.impl;
 import main.java.com.likeit.web.controller.command.Command;
 import main.java.com.likeit.web.service.QuestionService;
 import main.java.com.likeit.web.service.ServiceFactory;
+import main.java.com.likeit.web.service.exception.ServiceException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,14 +22,19 @@ public class QuestionCommandImpl implements Command {
                 request.getRequestDispatcher("/WEB-INF/page/createQuestion.jsp").forward(request, response);
                 break;
             case "create" :
-                askQuestion(request);
-                request.setAttribute("questions", questionService.getAll());
-                request.getRequestDispatcher("/WEB-INF/page/main.jsp").forward(request, response);
+                try {
+                    askQuestion(request);
+                    request.setAttribute("questions", questionService.getAll());
+                    request.getRequestDispatcher("/WEB-INF/page/main.jsp").forward(request, response);
+                } catch (ServiceException ex) {
+                    request.setAttribute("exception", ex);
+                    request.getRequestDispatcher("/WEB-INF/page/error.jsp").forward(request, response);
+                }
                 break;
         }
     }
 
-    private void askQuestion(HttpServletRequest request) {
+    private void askQuestion(HttpServletRequest request) throws ServiceException {
         String topic = request.getParameter("topic");
         String content = request.getParameter("content");
         String authorLogin = request.getSession(true).getAttribute("login").toString();

@@ -5,11 +5,13 @@ import main.java.com.likeit.web.domain.User;
 import main.java.com.likeit.web.service.QuestionService;
 import main.java.com.likeit.web.service.ServiceFactory;
 import main.java.com.likeit.web.service.UserService;
+import main.java.com.likeit.web.service.exception.ServiceException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 public class UserCommandImpl implements Command {
 
@@ -18,44 +20,36 @@ public class UserCommandImpl implements Command {
 
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        User user;
         switch (action) {
-            case "authorization" :
+            case "authorization":
                 response.sendRedirect("jsp/signIn.jsp");
                 break;
-            case "registration" :
+            case "registration":
                 response.sendRedirect("jsp/signUp.jsp");
                 break;
             case "signIn":
-                user = signIn(request);
-                request.getSession(true).setAttribute("login", user.getLogin());
-                request.setAttribute("user", user);
-                request.setAttribute("questions", questionService.getAll());
-                request.getRequestDispatcher("/WEB-INF/page/main.jsp").forward(request, response);
+                signIn(request, response);
                 break;
-            case "signUp" :
-                user = signUp(request);
-                request.getSession(true).setAttribute("login", user.getLogin());
-                request.setAttribute("user", user);
-                request.setAttribute("questions", questionService.getAll());
-                request.getRequestDispatcher("/WEB-INF/page/main.jsp").forward(request, response);
+            case "signUp":
+                signUp(request, response);
                 break;
         }
     }
 
-    private User signIn(HttpServletRequest request) {
+    private void signIn(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("login");
         String password = request.getParameter("password");
         User user;
         try {
             user = userService.signIn(username, password);
-        } catch (Exception e) {
-            user = new User();
+            returnToMainPage(request, response, user);
+        } catch (ServiceException ex) {
+            request.setAttribute("exception", ex);
+            request.getRequestDispatcher("/WEB-INF/page/error.jsp").forward(request, response);
         }
-        return user;
     }
 
-    private User signUp(HttpServletRequest request) {
+    private void signUp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("login");
         String password = request.getParameter("password");
         String repeatedPassword = request.getParameter("repeatedPassword");
@@ -63,10 +57,18 @@ public class UserCommandImpl implements Command {
         User user;
         try {
             user = userService.signUp(username, password, repeatedPassword, email);
-        } catch (Exception e) {
-            user = new User();
+            returnToMainPage(request, response, user);
+        } catch (ServiceException ex) {
+            request.setAttribute("exception", ex);
+            request.getRequestDispatcher("/WEB-INF/page/error.jsp").forward(request, response);
         }
-        return user;
+    }
+
+    private void returnToMainPage(HttpServletRequest request, HttpServletResponse response, User user) throws ServletException, IOException, ServiceException {
+        request.setAttribute("questions", questionService.getAll());
+        request.setAttribute("user", user);
+        request.getSession(true).setAttribute("login", user.getLogin());
+        request.getRequestDispatcher("/WEB-INF/page/main.jsp").forward(request, response);
     }
 
 }
