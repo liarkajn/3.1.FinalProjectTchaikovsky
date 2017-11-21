@@ -11,7 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 public class UserCommandImpl implements Command {
 
@@ -19,6 +18,18 @@ public class UserCommandImpl implements Command {
     private QuestionService questionService = ServiceFactory.getInstance().getQuestionService();
 
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getSession().getAttribute("login") != null) {
+            try {
+                returnToMainPage(request, response);
+            } catch (ServiceException ex) {
+                returnToErrorPage(request, response, ex);
+            }
+        } else {
+            performRequest(request, response);
+        }
+    }
+
+    private void performRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         switch (action) {
             case "authorization":
@@ -42,10 +53,10 @@ public class UserCommandImpl implements Command {
         User user;
         try {
             user = userService.signIn(username, password);
-            returnToMainPage(request, response, user);
+            request.getSession(true).setAttribute("login", user.getLogin());
+            returnToMainPage(request, response);
         } catch (ServiceException ex) {
-            request.setAttribute("exception", ex);
-            request.getRequestDispatcher("/WEB-INF/page/error.jsp").forward(request, response);
+            returnToErrorPage(request, response, ex);
         }
     }
 
@@ -57,18 +68,21 @@ public class UserCommandImpl implements Command {
         User user;
         try {
             user = userService.signUp(username, password, repeatedPassword, email);
-            returnToMainPage(request, response, user);
+            request.getSession(true).setAttribute("login", user.getLogin());
+            returnToMainPage(request, response);
         } catch (ServiceException ex) {
-            request.setAttribute("exception", ex);
-            request.getRequestDispatcher("/WEB-INF/page/error.jsp").forward(request, response);
+            returnToErrorPage(request, response, ex);
         }
     }
 
-    private void returnToMainPage(HttpServletRequest request, HttpServletResponse response, User user) throws ServletException, IOException, ServiceException {
+    private void returnToMainPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, ServiceException {
         request.setAttribute("questions", questionService.getAll());
-        request.setAttribute("user", user);
-        request.getSession(true).setAttribute("login", user.getLogin());
         request.getRequestDispatcher("/WEB-INF/page/main.jsp").forward(request, response);
+    }
+
+    private void returnToErrorPage(HttpServletRequest request, HttpServletResponse response, ServiceException ex) throws ServletException, IOException {
+        request.setAttribute("exception", ex);
+        request.getRequestDispatcher("/WEB-INF/page/error.jsp").forward(request, response);
     }
 
 }
