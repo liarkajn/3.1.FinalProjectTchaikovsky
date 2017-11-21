@@ -11,6 +11,8 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.Properties;
 
+import static main.java.com.likeit.web.dao.exception.Exceptions.*;
+
 public class SQLUserDAO implements UserDAO {
 
     private final static String MYSQL_CONFIG = "mysql.properties";

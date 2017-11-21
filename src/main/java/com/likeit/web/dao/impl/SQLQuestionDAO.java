@@ -16,6 +16,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import static main.java.com.likeit.web.dao.exception.Exceptions.*;
+
 public class SQLQuestionDAO implements QuestionDAO {
 
     private final static String MYSQL_CONFIG = "mysql.properties";
