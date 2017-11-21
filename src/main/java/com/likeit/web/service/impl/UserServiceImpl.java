@@ -6,31 +6,29 @@ import main.java.com.likeit.web.dao.exception.DAOException;
 import main.java.com.likeit.web.domain.User;
 import main.java.com.likeit.web.service.UserService;
 import main.java.com.likeit.web.service.exception.ServiceException;
+import main.java.com.likeit.web.service.validation.UserValidation;
 
 public class UserServiceImpl implements UserService {
 
     public User signIn(String login, String password) throws ServiceException {
 
-        if (!login.isEmpty() && !password.isEmpty()) {
-            DAOFactory daoFactory = DAOFactory.getInstance();
-            UserDAO userDAO = daoFactory.getUserDAO();
-            User user;
-            try {
-                user = userDAO.getUser(login, password);
-            } catch (DAOException ex) {
-                throw new ServiceException(ex);
-            }
-            return user;
-
+        UserValidation validation = new UserValidation();
+        validation.signInValidation(login, password);
+        DAOFactory daoFactory = DAOFactory.getInstance();
+        UserDAO userDAO = daoFactory.getUserDAO();
+        User user;
+        try {
+            user = userDAO.getUser(login, password);
+        } catch (DAOException ex) {
+            throw new ServiceException(ex);
         }
-        return new User();
+        return user;
+
     }
 
     public User signUp(String login, String password, String repeatedPassword, String email) throws ServiceException {
-
-        if (password.isEmpty() || !password.equals(repeatedPassword)) {
-            return new User();
-        }
+        UserValidation validation = new UserValidation();
+        validation.signUpValidation(login, password, repeatedPassword, email);
         DAOFactory daoFactory = DAOFactory.getInstance();
         UserDAO userDAO = daoFactory.getUserDAO();
         User user;
