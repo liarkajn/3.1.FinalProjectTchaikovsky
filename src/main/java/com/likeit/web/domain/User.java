@@ -1,8 +1,9 @@
 package main.java.com.likeit.web.domain;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class User {
+public class User implements Serializable {
 
     private String login;
     private String password;
@@ -66,6 +67,41 @@ public class User {
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    private boolean compareFields(User user) {
+        if (!login.equals(user.login) || !password.equals(user.password)
+                || !email.equals(user.email) || !registrationDate.equals(user.registrationDate)
+                || !name.equals(user.name) || !surname.equals(user.surname)
+                || rating != user.rating) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return 107 * login.hashCode() + password.hashCode() +
+                + email.hashCode() + registrationDate.hashCode() +
+                + name.hashCode() + surname.hashCode() + Double.valueOf(rating).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (null == obj) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        User user = (User) obj;
+        if (!super.equals(user)) {
+            return false;
+        }
+        return compareFields(user);
     }
 
     @Override
