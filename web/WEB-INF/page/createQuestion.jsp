@@ -9,21 +9,19 @@
     <fmt:setBundle basename="local" var="loc" />
     <fmt:message bundle="${loc}" key="local.question.topic.placeholder" var="topicPlaceholder" />
     <fmt:message bundle="${loc}" key="local.question.content.placeholder" var="contentPlaceholder" />
-    <fmt:message bundle="${loc}" key="local.question.askbutton.name" var="askbtnName" />
+    <fmt:message bundle="${loc}" key="local.question.askbutton.name" var="askBtnName" />
 
 </head>
 <body>
 
     <div align="center">
-
         <form action="main" method="get">
             <input type="hidden" name="command" value="question" />
             <input type="hidden" name="action" value="create" />
             <input type="text" name="topic" placeholder="${topicPlaceholder}" /> <br/>
             <textarea name="content" placeholder="${contentPlaceholder}"></textarea> <br/>
-            <input type="submit" value="${askbtnName}" />
+            <input type="submit" value="${askBtnName}" />
         </form>
-
     </div>
 
 </body>

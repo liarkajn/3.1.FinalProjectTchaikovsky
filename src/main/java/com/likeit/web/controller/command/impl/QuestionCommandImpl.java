@@ -12,32 +12,43 @@ import java.io.IOException;
 
 public class QuestionCommandImpl implements Command {
 
+    private final static String ACTION_FIELD_NAME = "action";
+    private final static String QUESTIONS_FIELD_NAME = "questions";
+    private final static String TOPIC_FIELD_NAME = "topic";
+    private final static String CONTENT_FIELD_NAME = "content";
+    private final static String LOGIN_SESSION_FIELD_NAME = "login";
+    private final static String EXCEPTION_FIELD_NAME = "exception";
+    private final static String ASK_ACTION = "ask";
+    private final static String CREATE_ACTION = "create";
+    private final static String MAIN_PAGE = "/WEB-INF/page/main.jsp";
+    private final static String QUESTION_CREATOR_PAGE = "/WEB-INF/page/createQuestion.jsp";
+    private final static String ERROR_PAGE = "/WEB-INF/page/error.jsp";
     private QuestionService questionService = ServiceFactory.getInstance().getQuestionService();
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getParameter("action");
+        String action = request.getParameter(ACTION_FIELD_NAME);
         switch (action) {
-            case "ask":
-                request.getRequestDispatcher("/WEB-INF/page/createQuestion.jsp").forward(request, response);
+            case ASK_ACTION:
+                request.getRequestDispatcher(QUESTION_CREATOR_PAGE).forward(request, response);
                 break;
-            case "create" :
+            case CREATE_ACTION :
                 try {
                     askQuestion(request);
-                    request.setAttribute("questions", questionService.getAll());
-                    request.getRequestDispatcher("/WEB-INF/page/main.jsp").forward(request, response);
+                    request.setAttribute(QUESTIONS_FIELD_NAME, questionService.getAll());
+                    request.getRequestDispatcher(MAIN_PAGE).forward(request, response);
                 } catch (ServiceException ex) {
-                    request.setAttribute("exception", ex);
-                    request.getRequestDispatcher("/WEB-INF/page/error.jsp").forward(request, response);
+                    request.setAttribute(EXCEPTION_FIELD_NAME, ex);
+                    request.getRequestDispatcher(ERROR_PAGE).forward(request, response);
                 }
                 break;
         }
     }
 
     private void askQuestion(HttpServletRequest request) throws ServiceException {
-        String topic = request.getParameter("topic");
-        String content = request.getParameter("content");
-        String authorLogin = request.getSession(true).getAttribute("login").toString();
+        String topic = request.getParameter(TOPIC_FIELD_NAME);
+        String content = request.getParameter(CONTENT_FIELD_NAME);
+        String authorLogin = request.getSession(true).getAttribute(LOGIN_SESSION_FIELD_NAME).toString();
         questionService.createQuestion(topic, content, authorLogin);
     }
 

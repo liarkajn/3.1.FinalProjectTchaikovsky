@@ -12,6 +12,8 @@ import java.io.IOException;
 public class FrontController extends HttpServlet {
 
     private final static String COMMAND_FIELD_NAME = "command";
+    private final static String LOCAL_FIELD_NAME = "local";
+    private final static String INDEX_PAGE = "index.jsp";
     private final CommandProvider commandProvider = new CommandProvider();
 
     @Override
@@ -25,8 +27,8 @@ public class FrontController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getSession(true).setAttribute("local", request.getParameter("local"));
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        request.getSession(true).setAttribute(LOCAL_FIELD_NAME, request.getParameter(LOCAL_FIELD_NAME));
+        request.getRequestDispatcher(INDEX_PAGE).forward(request, response);
     }
 
 }
