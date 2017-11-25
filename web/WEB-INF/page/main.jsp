@@ -16,8 +16,7 @@
     <h2><c:out value="${welcomeMessage}"/>, <c:out value="${sessionScope.login}"/></h2>
 
     <form action="main" method="get">
-        <input type="hidden" name="command" value="question"/>
-        <input type="hidden" name="action" value="ask"/>
+        <input type="hidden" name="command" value="question_creation"/>
         <input type="submit" value="${askBtnName}"/>
     </form>
 

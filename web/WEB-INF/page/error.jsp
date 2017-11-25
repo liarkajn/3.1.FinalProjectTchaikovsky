@@ -8,9 +8,7 @@
 
     <div align="center">
         <label>Oops! Something went wrong. Please try again later. :)</label><br/>
-        <c:if test="${requestScope.exception != null}">
-            <label><c:out value="${requestScope.exception.message}"/></label>
-        </c:if>
+        <label><c:out value="${requestScope.message}"/></label>
     </div>
 
 </body>

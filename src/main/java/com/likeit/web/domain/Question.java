@@ -42,18 +42,10 @@ public class Question implements Serializable {
         this.publishDate = publishDate;
     }
 
-    private boolean compareFields(Question question) {
-        if (!author.equals(question.author) || !topic.equals(question.topic)
-                || !content.equals(question.content) || !publishDate.equals(question.publishDate)) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public int hashCode() {
         return 107 * author.hashCode() + topic.hashCode() +
-                + content.hashCode() + publishDate.hashCode();
+                +content.hashCode() + publishDate.hashCode();
     }
 
     @Override
@@ -71,7 +63,8 @@ public class Question implements Serializable {
         if (!super.equals(question)) {
             return false;
         }
-        return compareFields(question);
+        return author.equals(question.author) && topic.equals(question.topic)
+                && content.equals(question.content) && publishDate.equals(question.publishDate);
     }
 
     @Override

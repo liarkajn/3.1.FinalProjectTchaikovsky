@@ -69,21 +69,11 @@ public class User implements Serializable {
         this.rating = rating;
     }
 
-    private boolean compareFields(User user) {
-        if (!login.equals(user.login) || !password.equals(user.password)
-                || !email.equals(user.email) || !registrationDate.equals(user.registrationDate)
-                || !name.equals(user.name) || !surname.equals(user.surname)
-                || rating != user.rating) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public int hashCode() {
         return 107 * login.hashCode() + password.hashCode() +
-                + email.hashCode() + registrationDate.hashCode() +
-                + name.hashCode() + surname.hashCode() + Double.valueOf(rating).hashCode();
+                +email.hashCode() + registrationDate.hashCode() +
+                +name.hashCode() + surname.hashCode() + Double.valueOf(rating).hashCode();
     }
 
     @Override
@@ -101,7 +91,10 @@ public class User implements Serializable {
         if (!super.equals(user)) {
             return false;
         }
-        return compareFields(user);
+        return login.equals(user.login) && password.equals(user.password)
+                && email.equals(user.email) && registrationDate.equals(user.registrationDate)
+                && name.equals(user.name) && surname.equals(user.surname)
+                && rating == user.rating;
     }
 
     @Override

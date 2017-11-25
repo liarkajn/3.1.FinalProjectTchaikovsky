@@ -13,7 +13,7 @@
   </head>
   <body>
 
-    <div align="center">
+    <div>
 
       <form action="main" method="post">
         <input type="hidden" name="local" value="ru" />
@@ -30,15 +30,13 @@
     <div align="center">
 
       <form action="main" method="get">
-        <input type="hidden" name="command" value="user" />
-        <input type="hidden" name="action" value="authorization" />
+        <input type="hidden" name="command" value="signIn" />
         <input type="submit" value="${signInButtonName}" />
       </form>
 
 
       <form action="main" method="get">
-        <input type="hidden" name="command" value="user" />
-        <input type="hidden" name="action" value="registration" />
+        <input type="hidden" name="command" value="signUp" />
         <input type="submit" value="${signUpButtonName}" />
       </form>
 

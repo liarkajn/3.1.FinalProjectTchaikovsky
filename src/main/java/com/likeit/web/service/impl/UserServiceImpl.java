@@ -9,6 +9,9 @@ import main.java.com.likeit.web.service.exception.ServiceException;
 import main.java.com.likeit.web.service.validation.CredentialsValidation;
 import main.java.com.likeit.web.service.validation.UserValidation;
 
+import static main.java.com.likeit.web.service.exception.Exceptions.UNABLE_TO_LOGIN;
+import static main.java.com.likeit.web.service.exception.Exceptions.UNABLE_TO_SIGNUP;
+
 public class UserServiceImpl implements UserService {
 
     private CredentialsValidation credentialsValidation = new CredentialsValidation();
@@ -24,7 +27,7 @@ public class UserServiceImpl implements UserService {
             user = userDAO.getUser(login, password);
             userValidation.validate(user);
         } catch (DAOException ex) {
-            throw new ServiceException(ex);
+            throw new ServiceException(UNABLE_TO_LOGIN.getMessage(), ex);
         }
         return user;
 
@@ -39,7 +42,7 @@ public class UserServiceImpl implements UserService {
             userDAO.saveUser(login, password, email);
             user = userDAO.getUser(login, password);
         } catch (DAOException ex) {
-            throw new ServiceException(ex);
+            throw new ServiceException(UNABLE_TO_SIGNUP.getMessage(), ex);
         }
         return user;
     }

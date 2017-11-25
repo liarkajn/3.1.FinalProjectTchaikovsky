@@ -1,8 +1,7 @@
 package main.java.com.likeit.web.controller;
 
-import main.java.com.likeit.web.controller.command.Command;
-import main.java.com.likeit.web.controller.command.CommandProvider;
-
+import main.java.com.likeit.web.controller.handler.authorised.AuthorisedHandler;
+import main.java.com.likeit.web.controller.handler.unauthorized.UnauthorisedHandler;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,18 +10,19 @@ import java.io.IOException;
 
 public class FrontController extends HttpServlet {
 
-    private final static String COMMAND_FIELD_NAME = "command";
     private final static String LOCAL_FIELD_NAME = "local";
-    private final static String INDEX_PAGE = "index.jsp";
-    private final CommandProvider commandProvider = new CommandProvider();
+    private final static String LOGIN_FIELD_NAME = "login";
+    private final static String INDEX_PAGE = "/WEB-INF/page/index.jsp";
+    private final AuthorisedHandler authorisedHandler = new AuthorisedHandler();
+    private final UnauthorisedHandler unauthorisedHandler = new UnauthorisedHandler();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        String commandName = request.getParameter(COMMAND_FIELD_NAME);
-        Command command = commandProvider.getCommand(commandName);
-        command.execute(request, response);
-
+        if (request.getSession(true).getAttribute(LOGIN_FIELD_NAME) == null) {
+            unauthorisedHandler.execute(request, response);
+        } else {
+            authorisedHandler.execute(request, response);
+        }
     }
 
     @Override

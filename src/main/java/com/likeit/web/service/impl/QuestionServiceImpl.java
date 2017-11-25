@@ -7,8 +7,10 @@ import main.java.com.likeit.web.domain.Question;
 import main.java.com.likeit.web.service.QuestionService;
 import main.java.com.likeit.web.service.exception.ServiceException;
 
-import java.util.LinkedList;
 import java.util.List;
+
+import static main.java.com.likeit.web.service.exception.Exceptions.UNABLE_FIND_QUESTION;
+import static main.java.com.likeit.web.service.exception.Exceptions.UNABLE_TO_CREATE_QUESTION;
 
 public class QuestionServiceImpl implements QuestionService {
 
@@ -19,7 +21,7 @@ public class QuestionServiceImpl implements QuestionService {
         try {
             questionDAO.saveQuestion(topic, content, authorLogin);
         } catch (DAOException ex) {
-            throw new ServiceException(ex);
+            throw new ServiceException(UNABLE_TO_CREATE_QUESTION.getMessage(), ex);
         }
     }
 
@@ -31,7 +33,7 @@ public class QuestionServiceImpl implements QuestionService {
         try {
             questions = questionDAO.getQuestions();
         } catch (DAOException ex) {
-            throw new ServiceException(ex);
+            throw new ServiceException(UNABLE_FIND_QUESTION.getMessage(), ex);
         }
         return questions;
     }

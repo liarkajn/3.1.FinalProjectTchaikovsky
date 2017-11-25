@@ -1,4 +1,5 @@
 package main.java.com.likeit.web.service;
+
 import main.java.com.likeit.web.domain.User;
 import main.java.com.likeit.web.service.exception.ServiceException;
 

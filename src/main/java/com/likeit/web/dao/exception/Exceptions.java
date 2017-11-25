@@ -2,6 +2,7 @@ package main.java.com.likeit.web.dao.exception;
 
 public enum Exceptions {
 
+    CONNECTION_CREATION_EXCEPTION("Can't establish connection to database"),
     DATABASE_OPERATIONS_EXCEPTION("Problems with database operations"),
     UNABLE_OPEN_PROPERTY_FILE("Unable open properties file"),
     MISSED_PROPERTY_FILE("Properties file not found"),
