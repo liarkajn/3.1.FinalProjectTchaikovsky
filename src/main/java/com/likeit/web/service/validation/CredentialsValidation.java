@@ -1,4 +1,4 @@
-package main.java.com.likeit.web.service.validation;
+package main.java.com.likeit.web.service.validation;// может это в impl поместить?
 
 import main.java.com.likeit.web.service.exception.ServiceException;
 import java.util.regex.Matcher;
