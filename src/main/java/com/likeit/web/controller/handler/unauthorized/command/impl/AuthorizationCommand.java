@@ -28,7 +28,7 @@ public class AuthorizationCommand implements Command {
             request.getSession(true).setAttribute(LOGIN_FIELD_NAME, user.getLogin());
             response.sendRedirect(MAIN_PAGE);
         } catch (ServiceException ex) {
-            response.sendRedirect(ERROR_PAGE + ex.getMessage());
+            response.sendRedirect(ERROR_PAGE + ex.getMessage());// сообщения исключений нельзя отправлять пользователю, вообще нельзя
         }
     }
 
