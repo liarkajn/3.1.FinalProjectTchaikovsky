@@ -37,7 +37,8 @@ public class SQLUserDAO implements UserDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DAOException(DATABASE_OPERATIONS_EXCEPTION.getMessage(), e);
+            throw new DAOException(DATABASE_OPERATIONS_EXCEPTION.getMessage(), e);// в логах и исключениях используется просто сообщене - строка
+            // их не надо именовать ,эти сообщения локальны
         }
         return id;
     }
