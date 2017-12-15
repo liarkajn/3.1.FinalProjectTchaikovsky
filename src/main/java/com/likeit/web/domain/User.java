@@ -15,7 +15,7 @@ public class User implements Serializable {
     private LocalDateTime registrationDate;
     private String name;
     private String surname;
-    private double rating;
+    private String bio;
 
     public int getId() {
         return id;
@@ -81,19 +81,19 @@ public class User implements Serializable {
         this.surname = surname;
     }
 
-    public double getRating() {
-        return rating;
+    public String getBio() {
+        return bio;
     }
 
-    public void setRating(double rating) {
-        this.rating = rating;
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     @Override
     public int hashCode() {
         return 107 * login.hashCode() + password.hashCode() +
                 +email.hashCode() + registrationDate.hashCode() +
-                +name.hashCode() + surname.hashCode() + Double.valueOf(rating).hashCode();
+                +name.hashCode() + surname.hashCode() + bio.hashCode();
     }
 
     @Override
@@ -114,7 +114,7 @@ public class User implements Serializable {
         return login.equals(user.login) && password.equals(user.password)
                 && email.equals(user.email) && registrationDate.equals(user.registrationDate)
                 && name.equals(user.name) && surname.equals(user.surname)
-                && rating == user.rating;
+                && bio.equals(user.bio);
     }
 
     @Override
@@ -124,8 +124,8 @@ public class User implements Serializable {
                 "\nname : " + name +
                 "\nsurname : " + surname +
                 "\nemail : " + email +
-                "\nrating : " + rating +
-                "\nregistration date : " + rating;
+                "\nregistration date : " + registrationDate +
+                "\nbio" + bio;
     }
 
 }

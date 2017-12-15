@@ -7,6 +7,10 @@
         <c:out value="${requestScope.question.topic}" />
     </title>
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <fmt:setLocale value="${sessionScope.local}"/>
+    <fmt:setBundle basename="local" var="loc"/>
+    <fmt:message bundle="${loc}" key="local.question.answer.content.placeholder" var="answerPlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.question.answerbutton.name" var="answerBtnName"/>
 </head>
 <body>
 
@@ -21,8 +25,8 @@
         </div>
 
         <div class="card card-1">
-            <textarea name="content" placeholder="Your answer"></textarea> <br/>
-            <input type="submit" value="Answer"/>
+            <textarea name="content" placeholder="${answerPlaceholder}"></textarea> <br/>
+            <input type="submit" value="${answerBtnName}"/>
         </div>
     </div>
 

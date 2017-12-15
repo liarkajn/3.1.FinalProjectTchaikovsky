@@ -19,12 +19,14 @@
 
 <div align="center">
 
-    <form method="get" action="/main">
-        <input type="hidden" name="command" value="authorization"/>
-        <input type="text" name="login" placeholder="${loginPlaceholder}" required /> <br/>
-        <input type="password" name="password" placeholder="${passwordPlaceholder}" required /> <br/>
-        <input type="submit" value="${signInButtonName}"/>
-    </form>
+    <div class="card card-1">
+        <form method="get" action="/main">
+            <input type="hidden" name="command" value="authorization"/>
+            <input type="text" name="login" placeholder="${loginPlaceholder}" required /> <br/>
+            <input type="password" name="password" placeholder="${passwordPlaceholder}" required /> <br/>
+            <input type="submit" value="${signInButtonName}"/>
+        </form>
+    </div>
 
 </div>
 

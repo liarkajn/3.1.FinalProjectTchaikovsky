@@ -20,18 +20,24 @@
         <c:set var="questions" scope="request" value="${requestScope.questions}"/>
         <c:forEach items="${questions}" var="question">
             <div class="card card-1">
-                <div class="topic">
-                    <form action="main" method="get">
-                        <input type="hidden" name="command" value="question"/>
-                        <input type="hidden" name="id" value="${question.id}"/>
-                        <input type="submit" value="${question.topic}"/>
-                    </form>
-                </div>
-                <div class="text"><c:out value="${question.content}"/></div> <br/>
-                <div class="publisher_label">
+                <div align="center">
+                    <a href="main?command=question&id=${question.id}"><c:out value="${question.topic}"/></a> <br/>
+                    <c:out value="${question.content}"/> <br/>
                     <c:out value="${question.publishDate}"/> <br/>
                     <a href="main?command=profile&id=${question.author.id}"><c:out value="${question.author.login}"/></a> <br/>
                 </div>
+                <%--<div class="topic">--%>
+                    <%--<form action="main" method="get">--%>
+                        <%--<input type="hidden" name="command" value="question"/>--%>
+                        <%--<input type="hidden" name="id" value="${question.id}"/>--%>
+                        <%--<input type="submit" value="${question.topic}"/>--%>
+                    <%--</form>--%>
+                <%--</div>--%>
+                <%--<div class="text"><c:out value="${question.content}"/></div> <br/>--%>
+                <%--<div class="publisher_label">--%>
+                    <%--<c:out value="${question.publishDate}"/> <br/>--%>
+                    <%--<a href="main?command=profile&id=${question.author.id}"><c:out value="${question.author.login}"/></a> <br/>--%>
+                <%--</div>--%>
             </div>
         </c:forEach>
     </c:if>

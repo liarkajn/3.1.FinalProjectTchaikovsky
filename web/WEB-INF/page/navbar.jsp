@@ -7,7 +7,8 @@
 <fmt:message bundle="${loc}" key="local.signinbutton.name" var="signInButtonName"/>
 <fmt:message bundle="${loc}" key="local.signupbutton.name" var="signUpButtonName"/>
 <fmt:message bundle="${loc}" key="local.question.askbutton.name" var="askBtnName"/>
-
+<fmt:message bundle="${loc}" key="local.profilebutton.name" var="profileBtnName"/>
+<fmt:message bundle="${loc}" key="local.logoutbutton.name" var="logOutBtnName"/>
 
 <div align="center">
     <div class="nav">
@@ -34,14 +35,14 @@
             <div class="tab">
                 <form action="main" method="get">
                     <input type="hidden" name="command" value="logout"/>
-                    <input type="submit" class="min-btn tab" value="Log out"/>
+                    <input type="submit" class="min-btn tab" value="${logOutBtnName}"/>
                 </form>
             </div>
             <div class="tab">
                 <form action="main" method="get">
                     <input type="hidden" name="command" value="profile"/>
                     <input type="hidden" name="id" value="${sessionScope.login}"/>
-                    <input type="submit" class="min-btn tab" value="Profile"/>
+                    <input type="submit" class="min-btn tab" value="${profileBtnName}"/>
                 </form>
             </div>
             <div class="tab">
@@ -51,6 +52,16 @@
                 </form>
             </div>
         </c:if>
+    </div>
+    <div>
+        <form action="main" method="post">
+            <input type="hidden" name="local" value="ru"/>
+            <input type="submit" class="min-btn" value="Русский"/>
+        </form>
+        <form action="main" method="post">
+            <input type="hidden" name="local" value="en"/>
+            <input type="submit" class="min-btn" value="English"/>
+        </form>
     </div>
 </div>
 

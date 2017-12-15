@@ -11,7 +11,7 @@ import java.io.IOException;
 public class FrontController extends HttpServlet {
 
     private final static String LOCAL_FIELD_NAME = "local";
-    private final static String INDEX_PAGE = "/WEB-INF/page/index.jsp";
+    private final static String QUESTIONS_PAGE = "/main?command=questions";
     private final Handler handler = new Handler();
 
     @Override
@@ -22,7 +22,7 @@ public class FrontController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getSession(true).setAttribute(LOCAL_FIELD_NAME, request.getParameter(LOCAL_FIELD_NAME));
-        request.getRequestDispatcher(INDEX_PAGE).forward(request, response);
+        response.sendRedirect(QUESTIONS_PAGE);
     }
 
 }

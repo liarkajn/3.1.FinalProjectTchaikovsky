@@ -19,16 +19,16 @@
 
 <div align="center">
 
-    <form method="get" action="/main">
-
-        <input type="hidden" name="command" value="registration"/>
-        <input type="text" name="login" placeholder="${loginPlaceholder}" required /> <br/>
-        <input type="text" name="email" placeholder="${emailPlaceholder}" required /> <br/>
-        <input type="password" name="password" placeholder="${passwordPlaceholder}" required /> <br/>
-        <input type="password" name="repeatedPassword" placeholder="${repeatedPasswordPlaceholder}" required /> <br/>
-        <input type="submit" value="${signUpButtonName}"/>
-
-    </form>
+    <div class="card card-1">
+        <form method="get" action="/main">
+            <input type="hidden" name="command" value="registration"/>
+            <input type="text" name="login" placeholder="${loginPlaceholder}" required /> <br/>
+            <input type="text" name="email" placeholder="${emailPlaceholder}" required /> <br/>
+            <input type="password" name="password" placeholder="${passwordPlaceholder}" required /> <br/>
+            <input type="password" name="repeatedPassword" placeholder="${repeatedPasswordPlaceholder}" required /> <br/>
+            <input type="submit" value="${signUpButtonName}"/>
+        </form>
+    </div>
 
 </div>
 

@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
         User user;
         try {
             user = userDAO.getUser(id);
+            userValidation.validate(user);
         } catch (DAOException ex) {
             throw new ServiceException(UNABLE_FIND_USER.getMessage(), ex);
         }
