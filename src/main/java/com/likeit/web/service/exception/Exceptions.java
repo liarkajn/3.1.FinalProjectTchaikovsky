@@ -11,7 +11,8 @@ public enum Exceptions {
     UNABLE_TO_LOGIN("Unable to login. Please, try later"),
     UNABLE_TO_SIGNUP("Unable to sign up. Please, try later"),
     UNABLE_TO_CREATE_QUESTION("Unable to create question. Please try later."),
-    UNABLE_FIND_QUESTION("Unable to find questions. Please try later");
+    UNABLE_FIND_QUESTION("Unable to find questions. Please try later"),
+    UNABLE_FIND_USER("Unable to find user.");
 
     private String message;
 

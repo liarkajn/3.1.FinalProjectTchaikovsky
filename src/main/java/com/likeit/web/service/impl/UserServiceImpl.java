@@ -9,6 +9,7 @@ import main.java.com.likeit.web.service.exception.ServiceException;
 import main.java.com.likeit.web.service.validation.CredentialsValidation;
 import main.java.com.likeit.web.service.validation.UserValidation;
 
+import static main.java.com.likeit.web.service.exception.Exceptions.UNABLE_FIND_USER;
 import static main.java.com.likeit.web.service.exception.Exceptions.UNABLE_TO_LOGIN;
 import static main.java.com.likeit.web.service.exception.Exceptions.UNABLE_TO_SIGNUP;
 
@@ -43,6 +44,18 @@ public class UserServiceImpl implements UserService {
             user = userDAO.getUser(login, password);
         } catch (DAOException ex) {
             throw new ServiceException(UNABLE_TO_SIGNUP.getMessage(), ex);
+        }
+        return user;
+    }
+
+    public User findUser(int id) throws ServiceException {
+        DAOFactory daoFactory = DAOFactory.getInstance();
+        UserDAO userDAO = daoFactory.getUserDAO();
+        User user;
+        try {
+            user = userDAO.getUser(id);
+        } catch (DAOException ex) {
+            throw new ServiceException(UNABLE_FIND_USER.getMessage(), ex);
         }
         return user;
     }

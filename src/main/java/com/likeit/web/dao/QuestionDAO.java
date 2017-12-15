@@ -9,5 +9,6 @@ public interface QuestionDAO {
 
     void saveQuestion(String topic, String content, String authorLogin) throws DAOException;
     List<Question> getQuestions() throws DAOException;
+    Question findQuestion(int id) throws DAOException;
 
 }

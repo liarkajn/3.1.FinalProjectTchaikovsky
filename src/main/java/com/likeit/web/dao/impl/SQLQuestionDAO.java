@@ -19,8 +19,33 @@ import static main.java.com.likeit.web.dao.exception.Exceptions.DATABASE_OPERATI
 
 public class SQLQuestionDAO implements QuestionDAO {
 
+    private final static String getQuestionById = "SELECT * FROM question WHERE id=?";
     private final static String queryAllQuestions = "SELECT * FROM question";
     private final static String saveQuestion = "INSERT INTO question (author_id, topic, content, publish_date) VALUES (?, ?, ?, ?);";
+
+    @Override
+    public Question findQuestion(int id) throws DAOException {
+        Question question = null;
+        try (Connection connection = Connector.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(getQuestionById)) {
+            preparedStatement.setInt(1, id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    question = new Question();
+                    int authorId = resultSet.getInt(2);
+                    User author = DAOFactory.getInstance().getUserDAO().getUser(authorId);
+                    question.setId(resultSet.getInt(1));
+                    question.setAuthor(author);
+                    question.setTopic(resultSet.getString(3));
+                    question.setContent(resultSet.getString(4));
+                    question.setPublishDate(resultSet.getTimestamp(5).toLocalDateTime());
+                }
+            }
+        } catch (SQLException e) {
+            throw new DAOException(DATABASE_OPERATIONS_EXCEPTION.getMessage(), e);
+        }
+        return question;
+    }
 
     @Override
     public void saveQuestion(String topic, String content, String authorLogin) throws DAOException {
@@ -54,6 +79,7 @@ public class SQLQuestionDAO implements QuestionDAO {
                     Question question = new Question();
                     int authorId = resultSet.getInt(2);
                     User author = userDAO.getUser(authorId);
+                    question.setId(resultSet.getInt(1));
                     question.setAuthor(author);
                     question.setTopic(resultSet.getString(3));
                     question.setContent(resultSet.getString(4));

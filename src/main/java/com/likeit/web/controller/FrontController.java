@@ -2,6 +2,8 @@ package main.java.com.likeit.web.controller;
 
 import main.java.com.likeit.web.controller.handler.authorised.AuthorisedHandler;
 import main.java.com.likeit.web.controller.handler.unauthorized.UnauthorisedHandler;
+import main.java.com.likeit.web.controller.handler.Handler;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,14 +17,16 @@ public class FrontController extends HttpServlet {
     private final static String INDEX_PAGE = "/WEB-INF/page/index.jsp";
     private final AuthorisedHandler authorisedHandler = new AuthorisedHandler();
     private final UnauthorisedHandler unauthorisedHandler = new UnauthorisedHandler();
+    private final Handler handler = new Handler();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getSession(true).getAttribute(LOGIN_FIELD_NAME) == null) {
-            unauthorisedHandler.execute(request, response);
-        } else {
-            authorisedHandler.execute(request, response);
-        }
+//        if (request.getSession(true).getAttribute(LOGIN_FIELD_NAME) == null) {
+//            unauthorisedHandler.execute(request, response);
+//        } else {
+//            authorisedHandler.execute(request, response);
+//        }
+        handler.execute(request, response);
     }
 
     @Override

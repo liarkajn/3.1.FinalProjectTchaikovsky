@@ -4,6 +4,7 @@
 <html>
 <head>
     <title>Ask a question</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
 
     <fmt:setLocale value="${sessionScope.local}" />
     <fmt:setBundle basename="local" var="loc" />
@@ -13,6 +14,8 @@
 
 </head>
 <body>
+
+    <jsp:include page="navbar.jsp"/>
 
     <div align="center">
         <form action="main" method="get">

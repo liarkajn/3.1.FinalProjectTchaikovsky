@@ -37,4 +37,18 @@ public class QuestionServiceImpl implements QuestionService {
         }
         return questions;
     }
+
+    @Override
+    public Question findQuestion(int id) throws ServiceException {
+        DAOFactory daoFactory = DAOFactory.getInstance();
+        QuestionDAO questionDAO = daoFactory.getQuestionDAO();
+        Question result;
+        try {
+            result = questionDAO.findQuestion(id);
+        } catch (DAOException ex) {
+            throw new ServiceException(UNABLE_FIND_QUESTION.getMessage(), ex);
+        }
+        return result;
+    }
+
 }

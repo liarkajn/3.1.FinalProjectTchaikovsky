@@ -5,6 +5,10 @@ import java.time.LocalDateTime;
 
 public class User implements Serializable {
 
+    //0 - admin, 1 - moderator, 2 - just user
+
+    private int id;
+    private short role;
     private String login;
     private String password;
     private String email;
@@ -12,6 +16,22 @@ public class User implements Serializable {
     private String name;
     private String surname;
     private double rating;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public short getRole() {
+        return role;
+    }
+
+    public void setRole(short role) {
+        this.role = role;
+    }
 
     public String getLogin() {
         return login;

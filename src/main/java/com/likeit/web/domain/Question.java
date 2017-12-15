@@ -5,10 +5,19 @@ import java.time.LocalDateTime;
 
 public class Question implements Serializable {
 
+    private int id;
     private User author;
     private String topic;
     private String content;
     private LocalDateTime publishDate;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public User getAuthor() {
         return author;

@@ -9,5 +9,6 @@ public interface QuestionService {
 
     void createQuestion(String topic, String content, String authorLogin) throws ServiceException;
     List<Question> getAll() throws ServiceException;
+    Question findQuestion(int id) throws ServiceException;
 
 }
