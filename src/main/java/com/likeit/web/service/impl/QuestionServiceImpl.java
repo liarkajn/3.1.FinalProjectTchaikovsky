@@ -6,36 +6,23 @@ import main.java.com.likeit.web.dao.exception.DAOException;
 import main.java.com.likeit.web.domain.Question;
 import main.java.com.likeit.web.service.QuestionService;
 import main.java.com.likeit.web.service.exception.ServiceException;
+import main.java.com.likeit.web.service.impl.validation.QuestionValidation;
 
 import java.util.List;
 
-import static main.java.com.likeit.web.service.exception.Exceptions.UNABLE_FIND_QUESTION;
-import static main.java.com.likeit.web.service.exception.Exceptions.UNABLE_TO_CREATE_QUESTION;
-
 public class QuestionServiceImpl implements QuestionService {
 
-    @Override
-    public void createQuestion(String topic, String content, String authorLogin) throws ServiceException {
-        DAOFactory daoFactory = DAOFactory.getInstance();
-        QuestionDAO questionDAO = daoFactory.getQuestionDAO();
-        try {
-            questionDAO.saveQuestion(topic, content, authorLogin);
-        } catch (DAOException ex) {
-            throw new ServiceException(UNABLE_TO_CREATE_QUESTION.getMessage(), ex);
-        }
-    }
+    private final QuestionValidation questionValidation = new QuestionValidation();
 
     @Override
-    public List<Question> getAll() throws ServiceException {
-        List<Question> questions;
+    public void createQuestion(String topic, String content, int authorId) throws ServiceException {
         DAOFactory daoFactory = DAOFactory.getInstance();
         QuestionDAO questionDAO = daoFactory.getQuestionDAO();
         try {
-            questions = questionDAO.getQuestions();
+            questionDAO.createQuestion(topic, content, authorId);
         } catch (DAOException ex) {
-            throw new ServiceException(UNABLE_FIND_QUESTION.getMessage(), ex);
+            throw new ServiceException("Unable to create question. Please try later.", ex);
         }
-        return questions;
     }
 
     @Override
@@ -44,11 +31,52 @@ public class QuestionServiceImpl implements QuestionService {
         QuestionDAO questionDAO = daoFactory.getQuestionDAO();
         Question result;
         try {
-            result = questionDAO.findQuestion(id);
+            result = questionDAO.readQuestion(id);
         } catch (DAOException ex) {
-            throw new ServiceException(UNABLE_FIND_QUESTION.getMessage(), ex);
+            throw new ServiceException("Unable find question with id " + id, ex);
         }
         return result;
+    }
+
+    @Override
+    public List<Question> findAllQuestions() throws ServiceException {
+        List<Question> questions;
+        DAOFactory daoFactory = DAOFactory.getInstance();
+        QuestionDAO questionDAO = daoFactory.getQuestionDAO();
+        try {
+            questions = questionDAO.readQuestions();
+        } catch (DAOException ex) {
+            throw new ServiceException("Unable find question list. Please, try later", ex);
+        }
+        return questions;
+    }
+
+    @Override
+    public List<Question> findQuestionsByTopic(String searchString) throws ServiceException {
+        List<Question> questions;
+        DAOFactory daoFactory = DAOFactory.getInstance();
+        QuestionDAO questionDAO = daoFactory.getQuestionDAO();
+        try {
+            questions = questionDAO.readQuestionsBySearchString(searchString);
+        } catch (DAOException ex) {
+            throw new ServiceException("Unable search questions. Please, try later", ex);
+        }
+        return questions;
+    }
+
+    @Override
+    public void editQuestion(int authorId, int questionId, String topic, String content) throws ServiceException {
+        questionValidation.validateQuestionEditing(authorId,questionId, topic, content);
+        QuestionDAO questionDAO = DAOFactory.getInstance().getQuestionDAO();
+        Question question = new Question();
+        question.setId(questionId);
+        question.setTopic(topic);
+        question.setContent(content);
+        try {
+            questionDAO.updateQuestion(question);
+        } catch (DAOException e) {
+            throw new ServiceException("Unable update question by id", e);
+        }
     }
 
 }

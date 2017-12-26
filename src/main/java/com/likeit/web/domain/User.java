@@ -91,9 +91,9 @@ public class User implements Serializable {
 
     @Override
     public int hashCode() {
-        return 107 * login.hashCode() + password.hashCode() +
-                +email.hashCode() + registrationDate.hashCode() +
-                +name.hashCode() + surname.hashCode() + bio.hashCode();
+        return 107 * id + role + login.hashCode() + password.hashCode() +
+                + email.hashCode() + registrationDate.hashCode() +
+                + name.hashCode() + surname.hashCode() + bio.hashCode();
     }
 
     @Override
@@ -111,15 +111,17 @@ public class User implements Serializable {
         if (!super.equals(user)) {
             return false;
         }
-        return login.equals(user.login) && password.equals(user.password)
-                && email.equals(user.email) && registrationDate.equals(user.registrationDate)
-                && name.equals(user.name) && surname.equals(user.surname)
-                && bio.equals(user.bio);
+        return id == user.id && role == user.role && login.equals(user.login)
+                && password.equals(user.password) && email.equals(user.email)
+                && registrationDate.equals(user.registrationDate) && name.equals(user.name)
+                && surname.equals(user.surname) && bio.equals(user.bio);
     }
 
     @Override
     public String toString() {
-        return "login : " + login +
+        return "id : " + id +
+                "\nrole : " + role +
+                "\nlogin : " + login +
                 "\npassword : " + password +
                 "\nname : " + name +
                 "\nsurname : " + surname +

@@ -6,12 +6,8 @@ import main.java.com.likeit.web.dao.exception.DAOException;
 import main.java.com.likeit.web.domain.User;
 import main.java.com.likeit.web.service.UserService;
 import main.java.com.likeit.web.service.exception.ServiceException;
-import main.java.com.likeit.web.service.validation.CredentialsValidation;
-import main.java.com.likeit.web.service.validation.UserValidation;
-
-import static main.java.com.likeit.web.service.exception.Exceptions.UNABLE_FIND_USER;
-import static main.java.com.likeit.web.service.exception.Exceptions.UNABLE_TO_LOGIN;
-import static main.java.com.likeit.web.service.exception.Exceptions.UNABLE_TO_SIGNUP;
+import main.java.com.likeit.web.service.impl.validation.CredentialsValidation;
+import main.java.com.likeit.web.service.impl.validation.UserValidation;
 
 public class UserServiceImpl implements UserService {
 
@@ -25,10 +21,10 @@ public class UserServiceImpl implements UserService {
         UserDAO userDAO = daoFactory.getUserDAO();
         User user;
         try {
-            user = userDAO.getUser(login, password);
+            user = userDAO.readUser(login, password);
             userValidation.validate(user);
         } catch (DAOException ex) {
-            throw new ServiceException(UNABLE_TO_LOGIN.getMessage(), ex);
+            throw new ServiceException("Unable to login. Please, try later", ex);
         }
         return user;
 
@@ -40,10 +36,10 @@ public class UserServiceImpl implements UserService {
         UserDAO userDAO = daoFactory.getUserDAO();
         User user;
         try {
-            userDAO.saveUser(login, password, email);
-            user = userDAO.getUser(login, password);
+            userDAO.createUser(login, password, email);
+            user = userDAO.readUser(login, password);
         } catch (DAOException ex) {
-            throw new ServiceException(UNABLE_TO_SIGNUP.getMessage(), ex);
+            throw new ServiceException("Unable to sign up. Please, try later", ex);
         }
         return user;
     }
@@ -53,10 +49,10 @@ public class UserServiceImpl implements UserService {
         UserDAO userDAO = daoFactory.getUserDAO();
         User user;
         try {
-            user = userDAO.getUser(id);
+            user = userDAO.readUser(id);
             userValidation.validate(user);
         } catch (DAOException ex) {
-            throw new ServiceException(UNABLE_FIND_USER.getMessage(), ex);
+            throw new ServiceException("Unable to find user with id + " + id, ex);
         }
         return user;
     }

@@ -8,12 +8,9 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static main.java.com.likeit.web.dao.exception.Exceptions.CONNECTION_CREATION_EXCEPTION;
-import static main.java.com.likeit.web.dao.exception.Exceptions.MISSED_JDBC_DRIVER;
-
 public class Connector {
 
-    private final static Logger LOGGER = Logger.getLogger(Connector.class.getName());
+    private final static Logger connectorLogger = Logger.getLogger(Connector.class.getName());
     private final static String DB_URL = "jdbc:mysql://localhost:3306/like_it";
     private final static String USERNAME = "root";
     private final static String PASSWORD = "root";
@@ -23,7 +20,7 @@ public class Connector {
         try {
             Class.forName(JDBC_DRIVER);
         } catch (ClassNotFoundException e) {
-            LOGGER.log(Level.INFO, MISSED_JDBC_DRIVER.getMessage(), e);
+            connectorLogger.log(Level.INFO, "Can't find JDBC driver", e);
         }
     }
 
@@ -32,7 +29,7 @@ public class Connector {
         try {
             connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
         } catch (SQLException e) {
-            throw new DAOException(CONNECTION_CREATION_EXCEPTION.getMessage(), e);
+            throw new DAOException("Can't establish connection to database", e);
         }
         return connection;
     }

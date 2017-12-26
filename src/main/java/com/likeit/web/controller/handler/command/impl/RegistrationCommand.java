@@ -13,6 +13,7 @@ import java.io.IOException;
 
 public class RegistrationCommand implements Command {
 
+    private final static String USER_ID_SESSION_FIELD_NAME = "id";
     private final static String LOGIN_FIELD_NAME = "login";
     private final static String PASSWORD_FIELD_NAME = "password";
     private final static String REPEATED_PASSWORD_FIELD_NAME = "repeatedPassword";
@@ -30,7 +31,7 @@ public class RegistrationCommand implements Command {
         User user;
         try {
             user = userService.signUp(username, password, repeatedPassword, email);
-            request.getSession(true).setAttribute(LOGIN_FIELD_NAME, user.getLogin());
+            request.getSession(true).setAttribute(USER_ID_SESSION_FIELD_NAME, user.getLogin());
             response.sendRedirect(QUESTIONS_PAGE);
         } catch (ServiceException ex) {
             response.sendRedirect(ERROR_PAGE + ex.getMessage());

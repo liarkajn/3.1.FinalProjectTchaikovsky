@@ -1,14 +1,8 @@
-package main.java.com.likeit.web.service.validation;
+package main.java.com.likeit.web.service.impl.validation;
 
 import main.java.com.likeit.web.service.exception.ServiceException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static main.java.com.likeit.web.service.exception.Exceptions.USER_LOGIN_WRONG_FORMAT;
-import static main.java.com.likeit.web.service.exception.Exceptions.USER_PASSWORD_DONT_MATCH_WITH_REPEATED;
-import static main.java.com.likeit.web.service.exception.Exceptions.USER_PASSWORD_WRONG_FORMAT;
-import static main.java.com.likeit.web.service.exception.Exceptions.USER_PASSWORD_LENGTH_FORMAT;
-import static main.java.com.likeit.web.service.exception.Exceptions.USER_EMAIL_WRONG_FORMAT;
 
 public class CredentialsValidation {
 
@@ -35,32 +29,32 @@ public class CredentialsValidation {
     private void checkLogin(String login) throws ServiceException {
         Matcher matcher = loginPattern.matcher(login);
         if (!matcher.matches()) {
-            throw new ServiceException(USER_LOGIN_WRONG_FORMAT.getMessage());
+            throw new ServiceException("User login has wrong format");
         }
     }
 
     private void checkPassword(String password) throws ServiceException {
         Matcher matcher = passwordPattern.matcher(password);
         if (!matcher.matches()) {
-            throw new ServiceException(USER_PASSWORD_WRONG_FORMAT.getMessage());
+            throw new ServiceException("User password has wrong format");
         }
         int length = password.length();
         if (length < 8 || length > 30) {
-            throw  new ServiceException(USER_PASSWORD_LENGTH_FORMAT.getMessage());
+            throw  new ServiceException("Password length must be from 8 to 30 characters");
         }
     }
 
     private void checkPassword(String password, String repeatedPassword) throws ServiceException {
         checkPassword(password);
         if (!password.equals(repeatedPassword)) {
-            throw new ServiceException(USER_PASSWORD_DONT_MATCH_WITH_REPEATED.getMessage());
+            throw new ServiceException("Password and repeated password aren't similar");
         }
     }
 
     private void checkEmail(String email) throws ServiceException {
         Matcher matcher = emailPattern.matcher(email);
         if (!matcher.matches()) {
-            throw new ServiceException(USER_EMAIL_WRONG_FORMAT.getMessage());
+            throw new ServiceException("User email has wrong format");
         }
     }
 

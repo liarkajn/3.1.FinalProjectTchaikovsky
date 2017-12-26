@@ -16,8 +16,11 @@ public class CommandProvider {
         commands.put(CommandName.REGISTRATION, new RegistrationCommand());
         commands.put(CommandName.QUESTIONS, new QuestionsCommand());
         commands.put(CommandName.QUESTION, new QuestionCommand());
-        commands.put(CommandName.QUESTION_CREATION, new QuestCreationCommand());
+        commands.put(CommandName.QUESTION_CREATION, new QuestionCreationCommand());
         commands.put(CommandName.AFTER_QUESTION_CREATION, new AfterQuestionCreationCommand());
+        commands.put(CommandName.AFTER_ANSWER_CREATION, new AfterAnswerCreationCommand());
+        commands.put(CommandName.ANSWER_EDITING, new AnswerEditingCommand());
+        commands.put(CommandName.VOTE_CREATION, new VoteCreationCommand());
         commands.put(CommandName.PROFILE, new UserProfileCommand());
         commands.put(CommandName.LOGOUT, new LogOutCommand());
         commands.put(CommandName.ERROR, new ErrorCommand());

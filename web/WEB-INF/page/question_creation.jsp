@@ -21,8 +21,17 @@
     <div class="card card-1">
         <form action="main" method="get">
             <input type="hidden" name="command" value="after_question_creation"/>
-            <input type="text" name="topic" placeholder="${topicPlaceholder}"/> <br/>
-            <textarea name="content" placeholder="${contentPlaceholder}"></textarea> <br/>
+            <c:if test="${requestScope.questionId != null}">
+                <input type="hidden" name="question_id" value="${requestScope.questionId}" />
+                <input type="text" name="topic" placeholder="${topicPlaceholder}" value="${requestScope.topic}"/> <br/>
+                <textarea name="content" placeholder="${contentPlaceholder}">
+                    <c:out value="${requestScope.content}" />
+                </textarea> <br/>
+            </c:if>
+            <c:if test="${requestScope.questionId == null}">
+                <input type="text" name="topic" placeholder="${topicPlaceholder}"/> <br/>
+                <textarea name="content" placeholder="${contentPlaceholder}"></textarea> <br/>
+            </c:if>
             <input type="submit" value="${askBtnName}"/>
         </form>
     </div>

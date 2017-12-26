@@ -26,18 +26,6 @@
                     <c:out value="${question.publishDate}"/> <br/>
                     <a href="main?command=profile&id=${question.author.id}"><c:out value="${question.author.login}"/></a> <br/>
                 </div>
-                <%--<div class="topic">--%>
-                    <%--<form action="main" method="get">--%>
-                        <%--<input type="hidden" name="command" value="question"/>--%>
-                        <%--<input type="hidden" name="id" value="${question.id}"/>--%>
-                        <%--<input type="submit" value="${question.topic}"/>--%>
-                    <%--</form>--%>
-                <%--</div>--%>
-                <%--<div class="text"><c:out value="${question.content}"/></div> <br/>--%>
-                <%--<div class="publisher_label">--%>
-                    <%--<c:out value="${question.publishDate}"/> <br/>--%>
-                    <%--<a href="main?command=profile&id=${question.author.id}"><c:out value="${question.author.login}"/></a> <br/>--%>
-                <%--</div>--%>
             </div>
         </c:forEach>
     </c:if>

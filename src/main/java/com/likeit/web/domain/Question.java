@@ -53,8 +53,8 @@ public class Question implements Serializable {
 
     @Override
     public int hashCode() {
-        return 107 * author.hashCode() + topic.hashCode() +
-                +content.hashCode() + publishDate.hashCode();
+        return 107 * id + author.hashCode() + topic.hashCode() +
+                + content.hashCode() + publishDate.hashCode();
     }
 
     @Override
@@ -72,16 +72,18 @@ public class Question implements Serializable {
         if (!super.equals(question)) {
             return false;
         }
-        return author.equals(question.author) && topic.equals(question.topic)
-                && content.equals(question.content) && publishDate.equals(question.publishDate);
+        return id == question.id && author.equals(question.author) &&
+                topic.equals(question.topic) && content.equals(question.content) &&
+                publishDate.equals(question.publishDate);
     }
 
     @Override
     public String toString() {
-        return "author : " + author +
+        return "id : " + id +
+                "\nauthor : " + author +
                 "\ntopic : " + topic +
                 "\ncontent : " + content +
-                "\npublishDate : " + publishDate;
+                "\npublish date : " + publishDate;
     }
 
 }

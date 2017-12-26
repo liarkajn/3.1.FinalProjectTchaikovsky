@@ -13,6 +13,7 @@ import java.io.IOException;
 
 public class AuthorizationCommand implements Command {
 
+    private final static String USER_ID_SESSION_FIELD_NAME = "id";
     private final static String LOGIN_FIELD_NAME = "login";
     private final static String PASSWORD_FIELD_NAME = "password";
     private final static String QUESTIONS_PAGE = "?command=questions";
@@ -26,7 +27,7 @@ public class AuthorizationCommand implements Command {
         User user;
         try {
             user = userService.signIn(username, password);
-            request.getSession(true).setAttribute(LOGIN_FIELD_NAME, user.getId());
+            request.getSession(true).setAttribute(USER_ID_SESSION_FIELD_NAME, user.getId());
             response.sendRedirect(QUESTIONS_PAGE);
         } catch (ServiceException ex) {
             response.sendRedirect(ERROR_PAGE + ex.getMessage());
