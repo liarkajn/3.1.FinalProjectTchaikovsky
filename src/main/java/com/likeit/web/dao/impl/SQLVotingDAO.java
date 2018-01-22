@@ -1,12 +1,13 @@
-package main.java.com.likeit.web.dao.impl;
+package com.likeit.web.dao.impl;
 
-import main.java.com.likeit.web.dao.AnswerDAO;
-import main.java.com.likeit.web.dao.DAOFactory;
-import main.java.com.likeit.web.dao.UserDAO;
-import main.java.com.likeit.web.dao.VotingDAO;
-import main.java.com.likeit.web.dao.connector.Connector;
-import main.java.com.likeit.web.dao.exception.DAOException;
-import main.java.com.likeit.web.domain.Vote;
+import com.likeit.web.dao.AnswerDAO;
+import com.likeit.web.dao.DAOFactory;
+import com.likeit.web.dao.UserDAO;
+import com.likeit.web.dao.VotingDAO;
+import com.likeit.web.dao.connector.ConnectionPool;
+import com.likeit.web.dao.connector.ConnectionPoolException;
+import com.likeit.web.dao.exception.DAOException;
+import com.likeit.web.domain.Vote;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,8 +21,8 @@ public class SQLVotingDAO implements VotingDAO {
 
     @Override
     public void createVote(int authorId, int answerId, int mark) throws DAOException {
-        try(Connection connection = Connector.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(createVote)) {
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(createVote)) {
 
             preparedStatement.setInt(1, authorId);
             preparedStatement.setInt(2, answerId);
@@ -29,7 +30,7 @@ public class SQLVotingDAO implements VotingDAO {
 
             preparedStatement.executeUpdate();
 
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable save vote", e);
         }
     }
@@ -37,7 +38,7 @@ public class SQLVotingDAO implements VotingDAO {
     @Override
     public Vote readVote(int voteId) throws DAOException {
         Vote vote = null;
-        try(Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(readVoteById)) {
 
             preparedStatement.setInt(1, voteId);
@@ -56,7 +57,7 @@ public class SQLVotingDAO implements VotingDAO {
                 }
             }
 
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable find vote with id " + voteId, e);
         }
         return vote;

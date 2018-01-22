@@ -1,4 +1,4 @@
-package main.java.com.likeit.web.service.exception;
+package com.likeit.web.service.exception;
 
 public class ServiceException extends Exception {
 

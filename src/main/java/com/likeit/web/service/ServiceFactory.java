@@ -1,9 +1,9 @@
-package main.java.com.likeit.web.service;
+package com.likeit.web.service;
 
-import main.java.com.likeit.web.service.impl.AnswerServiceImpl;
-import main.java.com.likeit.web.service.impl.QuestionServiceImpl;
-import main.java.com.likeit.web.service.impl.UserServiceImpl;
-import main.java.com.likeit.web.service.impl.VotingServiceImpl;
+import com.likeit.web.service.impl.AnswerServiceImpl;
+import com.likeit.web.service.impl.QuestionServiceImpl;
+import com.likeit.web.service.impl.UserServiceImpl;
+import com.likeit.web.service.impl.VotingServiceImpl;
 
 public class ServiceFactory {
 

@@ -1,4 +1,4 @@
-package main.java.com.likeit.web.controller.handler.command;
+package com.likeit.web.controller.handler.command;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

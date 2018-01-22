@@ -1,14 +1,15 @@
-package main.java.com.likeit.web.dao.impl;
+package com.likeit.web.dao.impl;
 
-import main.java.com.likeit.web.dao.AnswerDAO;
-import main.java.com.likeit.web.dao.DAOFactory;
-import main.java.com.likeit.web.dao.QuestionDAO;
-import main.java.com.likeit.web.dao.UserDAO;
-import main.java.com.likeit.web.dao.connector.Connector;
-import main.java.com.likeit.web.dao.exception.DAOException;
-import main.java.com.likeit.web.domain.Answer;
-import main.java.com.likeit.web.domain.Question;
-import main.java.com.likeit.web.domain.User;
+import com.likeit.web.dao.AnswerDAO;
+import com.likeit.web.dao.DAOFactory;
+import com.likeit.web.dao.QuestionDAO;
+import com.likeit.web.dao.UserDAO;
+import com.likeit.web.dao.connector.ConnectionPool;
+import com.likeit.web.dao.connector.ConnectionPoolException;
+import com.likeit.web.dao.exception.DAOException;
+import com.likeit.web.domain.Answer;
+import com.likeit.web.domain.Question;
+import com.likeit.web.domain.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class SQLAnswerDAO implements AnswerDAO {
 
-    private final static String createAnswer = "INSERT INTO answer (author_id, question_id, content, publish_date) VALUES (?, ?, ?, ?)";
+    private final static String createAnswer = "INSERT INTO answer (author_id, question_id, content, creation_time) VALUES (?, ?, ?, ?)";
     private final static String readAnswerById = "SELECT * FROM answer WHERE id=?";
     private final static String readAnswersByQuestionId = "SELECT * FROM answer WHERE question_id=?";
     private final static String updateAnswerById = "UPDATE answer SET content=? WHERE id=?";
@@ -31,7 +32,7 @@ public class SQLAnswerDAO implements AnswerDAO {
 
     @Override
     public void createAnswer(int authorId, int questionId, String content) throws DAOException {
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(createAnswer)) {
 
             preparedStatement.setInt(1, authorId);
@@ -41,7 +42,7 @@ public class SQLAnswerDAO implements AnswerDAO {
 
             preparedStatement.executeUpdate();
 
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable save user", e);
         }
     }
@@ -49,7 +50,7 @@ public class SQLAnswerDAO implements AnswerDAO {
     @Override
     public Answer readAnswerById(int id) throws DAOException {
         Answer answer = null;
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(readAnswerById)) {
 
             preparedStatement.setInt(1, id);
@@ -61,16 +62,16 @@ public class SQLAnswerDAO implements AnswerDAO {
                 while (resultSet.next()) {
                     answer = new Answer();
                     answer.setId(resultSet.getInt(1));
-                    User user =userDAO.readUser(resultSet.getInt(2));
+                    answer.setContent(resultSet.getString(2));
+                    User user =userDAO.readUser(resultSet.getInt(3));
                     answer.setAuthor(user);
-                    Question question = questionDAO.readQuestion(resultSet.getInt(3));
+                    answer.setPublishDate(resultSet.getTimestamp(4).toLocalDateTime());
+                    Question question = questionDAO.readQuestion(resultSet.getInt(5));
                     answer.setQuestion(question);
-                    question.setContent(resultSet.getString(4));
-                    question.setPublishDate(resultSet.getTimestamp(5).toLocalDateTime());
                 }
             }
 
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable find answer with id : " + id, e);
         }
         return answer;
@@ -82,7 +83,7 @@ public class SQLAnswerDAO implements AnswerDAO {
         UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
         QuestionDAO questionDAO = DAOFactory.getInstance().getQuestionDAO();
         Question question = questionDAO.readQuestion(questionId);
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(readAnswersByQuestionId)) {
 
             preparedStatement.setInt(1, questionId);
@@ -91,16 +92,16 @@ public class SQLAnswerDAO implements AnswerDAO {
                 while (resultSet.next()) {
                     Answer answer = new Answer();
                     answer.setId(resultSet.getInt(1));
-                    User author = userDAO.readUser(resultSet.getInt(2));
+                    User author = userDAO.readUser(resultSet.getInt(3));
                     answer.setAuthor(author);
                     answer.setQuestion(question);
-                    answer.setContent(resultSet.getString(4));
-                    answer.setPublishDate(resultSet.getTimestamp(5).toLocalDateTime());
+                    answer.setContent(resultSet.getString(2));
+                    answer.setPublishDate(resultSet.getTimestamp(4).toLocalDateTime());
                     answers.add(answer);
                 }
             }
 
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable read find answers for question " + questionId, e);
         }
         return answers;
@@ -113,7 +114,7 @@ public class SQLAnswerDAO implements AnswerDAO {
 
     @Override
     public void updateAnswer(Answer answer) throws DAOException {
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(updateAnswerById)) {
 
             preparedStatement.setString(1, answer.getContent());
@@ -121,7 +122,7 @@ public class SQLAnswerDAO implements AnswerDAO {
 
             preparedStatement.executeUpdate();
 
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable update answer with id : " + answer.getId(), e);
         }
     }

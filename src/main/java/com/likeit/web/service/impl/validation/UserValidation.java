@@ -1,7 +1,7 @@
-package main.java.com.likeit.web.service.impl.validation;
+package com.likeit.web.service.impl.validation;
 
-import main.java.com.likeit.web.domain.User;
-import main.java.com.likeit.web.service.exception.ServiceException;
+import com.likeit.web.domain.User;
+import com.likeit.web.service.exception.ServiceException;
 
 public class UserValidation {
 
@@ -9,6 +9,10 @@ public class UserValidation {
         if (user == null) {
             throw new ServiceException("No such user");
         }
+    }
+
+    public boolean isAdmin(User user) {
+        return user.getRole() == 0 || user.getRole() == 1;
     }
 
 }

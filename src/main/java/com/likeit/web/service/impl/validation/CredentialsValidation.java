@@ -1,6 +1,7 @@
-package main.java.com.likeit.web.service.impl.validation;
+package com.likeit.web.service.impl.validation;
 
-import main.java.com.likeit.web.service.exception.ServiceException;
+import com.likeit.web.service.exception.ServiceException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

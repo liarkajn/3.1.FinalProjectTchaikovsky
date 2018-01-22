@@ -1,9 +1,9 @@
-package main.java.com.likeit.web.dao;
+package com.likeit.web.dao;
 
-import main.java.com.likeit.web.dao.impl.SQLAnswerDAO;
-import main.java.com.likeit.web.dao.impl.SQLQuestionDAO;
-import main.java.com.likeit.web.dao.impl.SQLUserDAO;
-import main.java.com.likeit.web.dao.impl.SQLVotingDAO;
+import com.likeit.web.dao.impl.SQLAnswerDAO;
+import com.likeit.web.dao.impl.SQLQuestionDAO;
+import com.likeit.web.dao.impl.SQLUserDAO;
+import com.likeit.web.dao.impl.SQLVotingDAO;
 
 public class DAOFactory {
 

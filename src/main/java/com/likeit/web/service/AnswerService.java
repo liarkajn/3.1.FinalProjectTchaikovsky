@@ -1,7 +1,7 @@
-package main.java.com.likeit.web.service;
+package com.likeit.web.service;
 
-import main.java.com.likeit.web.domain.Answer;
-import main.java.com.likeit.web.service.exception.ServiceException;
+import com.likeit.web.domain.Answer;
+import com.likeit.web.service.exception.ServiceException;
 
 import java.util.List;
 

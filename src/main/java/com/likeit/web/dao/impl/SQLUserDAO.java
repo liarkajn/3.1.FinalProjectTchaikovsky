@@ -1,9 +1,11 @@
-package main.java.com.likeit.web.dao.impl;
+package com.likeit.web.dao.impl;
 
-import main.java.com.likeit.web.dao.UserDAO;
-import main.java.com.likeit.web.dao.connector.Connector;
-import main.java.com.likeit.web.dao.exception.DAOException;
-import main.java.com.likeit.web.domain.User;
+import com.likeit.web.dao.UserDAO;
+import com.likeit.web.dao.connector.ConnectionPool;
+import com.likeit.web.dao.connector.ConnectionPoolException;
+import com.likeit.web.dao.exception.DAOException;
+import com.likeit.web.domain.User;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,11 +16,13 @@ import java.util.List;
 
 public class SQLUserDAO implements UserDAO {
 
-    private final static String createUser = "INSERT INTO user (login, password, email, registration_date, role) VALUES (?, ?, ?, ?, ?);";
+    private final static String createUser = "INSERT INTO user (login, password, email, registration_time) VALUES (?, ?, ?, ?);";
     private final static String getIdByLogin = "SELECT id FROM user WHERE login=?";
     private final static String readUserById = "SELECT * FROM user WHERE id=?";
     private final static String readUserByLoginAndPassword = "SELECT * FROM user WHERE login=? AND password=?";
+    private final static String readUsers = "SELECT * FROM user";
     private final static String readUsersBySearchString = "SELECT * FROM user WHERE login LIKE ?";
+    private final static String updateUser = "UPDATE user SET login=?, email=?, name=?, surname=?, bio=?, role=? WHERE id=?";
 
     public SQLUserDAO() {
 
@@ -31,18 +35,17 @@ public class SQLUserDAO implements UserDAO {
         if (user != null) {
             throw new DAOException("User already exists");
         }
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(createUser)) {
 
             preparedStatement.setString(1, login);
             preparedStatement.setString(2, password);
             preparedStatement.setString(3, email);
             preparedStatement.setString(4, LocalDateTime.now().toString());
-            preparedStatement.setInt(5, 2);
 
             preparedStatement.executeUpdate();
 
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable save user", e);
         }
     }
@@ -50,7 +53,7 @@ public class SQLUserDAO implements UserDAO {
     @Override
     public int getId(String login) throws DAOException {
         int id = -1;
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(getIdByLogin)) {
 
             preparedStatement.setString(1, login);
@@ -60,7 +63,7 @@ public class SQLUserDAO implements UserDAO {
                     id = resultSet.getInt(1);
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable find user by login : " + login, e);
         }
         return id;
@@ -69,13 +72,13 @@ public class SQLUserDAO implements UserDAO {
     @Override
     public User readUser(int id) throws DAOException {
         User user;
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(readUserById)) {
             preparedStatement.setInt(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 user = extractUser(resultSet);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable find user by id : " + id, e);
         }
         return user;
@@ -84,7 +87,7 @@ public class SQLUserDAO implements UserDAO {
     @Override
     public User readUser(String login, String password) throws DAOException {
         User user;
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(readUserByLoginAndPassword)) {
 
             preparedStatement.setString(1, login);
@@ -93,32 +96,58 @@ public class SQLUserDAO implements UserDAO {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 user = extractUser(resultSet);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable find user with login : " + login, e);
         }
         return user;
     }
 
     @Override
+    public List<User> readUsers() throws DAOException {
+        List<User> result = new LinkedList<>();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(readUsers)) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    User user = new User();
+                    user.setId(resultSet.getInt(1));
+                    user.setRole(resultSet.getShort(2));
+                    user.setLogin(resultSet.getString(4));
+                    user.setEmail(resultSet.getString(6));
+                    user.setName(resultSet.getString(7));
+                    user.setSurname(resultSet.getString(8));
+                    user.setRegistrationDate(resultSet.getTimestamp(9).toLocalDateTime());
+                    user.setBio(resultSet.getString(10));
+                    result.add(user);
+                }
+            }
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Problems with database operations. Unable search users", e);
+        }
+        return result;
+    }
+
+    @Override
     public List<User> readUsers(String searchString) throws DAOException {
         List<User> result = new LinkedList<>();
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(readUsersBySearchString)) {
             preparedStatement.setString(1, "%" + searchString + "%") ;
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     User user = new User();
                     user.setId(resultSet.getInt(1));
-                    user.setLogin(resultSet.getString(2));
-                    user.setEmail(resultSet.getString(4));
-                    user.setRegistrationDate(resultSet.getTimestamp(5).toLocalDateTime());
-                    user.setName(resultSet.getString(6));
-                    user.setSurname(resultSet.getString(7));
-                    user.setRole(resultSet.getShort(8));
+                    user.setRole(resultSet.getShort(2));
+                    user.setLogin(resultSet.getString(4));
+                    user.setEmail(resultSet.getString(6));
+                    user.setName(resultSet.getString(7));
+                    user.setSurname(resultSet.getString(8));
+                    user.setRegistrationDate(resultSet.getTimestamp(9).toLocalDateTime());
+                    user.setBio(resultSet.getString(10));
                     result.add(user);
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable search users", e);
         }
         return result;
@@ -129,19 +158,35 @@ public class SQLUserDAO implements UserDAO {
         while (resultSet.next()) {
             user = new User();
             user.setId(resultSet.getInt(1));
-            user.setLogin(resultSet.getString(2));
-            user.setEmail(resultSet.getString(4));
-            user.setRegistrationDate(resultSet.getTimestamp(5).toLocalDateTime());
-            user.setName(resultSet.getString(6));
-            user.setSurname(resultSet.getString(7));
-            user.setRole(resultSet.getShort(8));
+            user.setRole(resultSet.getShort(2));
+            user.setLogin(resultSet.getString(4));
+            user.setEmail(resultSet.getString(6));
+            user.setName(resultSet.getString(7));
+            user.setSurname(resultSet.getString(8));
+            user.setRegistrationDate(resultSet.getTimestamp(9).toLocalDateTime());
+            user.setBio(resultSet.getString(10));
         }
         return user;
     }
 
     @Override
     public void updateUser(User user) throws DAOException {
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(updateUser)) {
 
+            preparedStatement.setString(1, user.getLogin());
+            preparedStatement.setString(2, user.getEmail());
+            preparedStatement.setString(3, user.getName());
+            preparedStatement.setString(4, user.getSurname());
+            preparedStatement.setString(5, user.getBio());
+            preparedStatement.setShort(6, user.getRole());
+            preparedStatement.setInt(7, user.getId());
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Problems with database operations. Unable update user with id : " + user.getId(), e);
+        }
     }
 
     @Override

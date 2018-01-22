@@ -1,13 +1,15 @@
-package main.java.com.likeit.web.service.impl;
+package com.likeit.web.service.impl;
 
-import main.java.com.likeit.web.dao.DAOFactory;
-import main.java.com.likeit.web.dao.UserDAO;
-import main.java.com.likeit.web.dao.exception.DAOException;
-import main.java.com.likeit.web.domain.User;
-import main.java.com.likeit.web.service.UserService;
-import main.java.com.likeit.web.service.exception.ServiceException;
-import main.java.com.likeit.web.service.impl.validation.CredentialsValidation;
-import main.java.com.likeit.web.service.impl.validation.UserValidation;
+import com.likeit.web.dao.DAOFactory;
+import com.likeit.web.dao.UserDAO;
+import com.likeit.web.dao.exception.DAOException;
+import com.likeit.web.domain.User;
+import com.likeit.web.service.UserService;
+import com.likeit.web.service.exception.ServiceException;
+import com.likeit.web.service.impl.validation.CredentialsValidation;
+import com.likeit.web.service.impl.validation.UserValidation;
+
+import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
@@ -28,6 +30,14 @@ public class UserServiceImpl implements UserService {
         }
         return user;
 
+    }
+
+    public User adminSignIn(String login, String password) throws ServiceException {
+        User user = signIn(login, password);
+        if (!userValidation.isAdmin(user)) {
+            throw new ServiceException("This user isn't administrator");
+        }
+        return user;
     }
 
     public User signUp(String login, String password, String repeatedPassword, String email) throws ServiceException {
@@ -55,6 +65,28 @@ public class UserServiceImpl implements UserService {
             throw new ServiceException("Unable to find user with id + " + id, ex);
         }
         return user;
+    }
+
+    public List<User> findUsers() throws ServiceException {
+        DAOFactory daoFactory = DAOFactory.getInstance();
+        UserDAO userDAO = daoFactory.getUserDAO();
+        List<User> users;
+        try {
+            users = userDAO.readUsers();
+        } catch (DAOException ex) {
+            throw new ServiceException("Unable to find users", ex);
+        }
+        return users;
+    }
+
+    public void editUser(User user) throws ServiceException {
+        DAOFactory daoFactory = DAOFactory.getInstance();
+        UserDAO userDAO = daoFactory.getUserDAO();
+        try {
+            userDAO.updateUser(user);
+        } catch (DAOException ex) {
+            throw new ServiceException("Unable to update user with id=" + user.getId(), ex);
+        }
     }
 
 }

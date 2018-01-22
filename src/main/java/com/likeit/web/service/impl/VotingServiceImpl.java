@@ -1,12 +1,12 @@
-package main.java.com.likeit.web.service.impl;
+package com.likeit.web.service.impl;
 
-import main.java.com.likeit.web.dao.DAOFactory;
-import main.java.com.likeit.web.dao.VotingDAO;
-import main.java.com.likeit.web.dao.exception.DAOException;
-import main.java.com.likeit.web.domain.Vote;
-import main.java.com.likeit.web.service.VotingService;
-import main.java.com.likeit.web.service.exception.ServiceException;
-import main.java.com.likeit.web.service.impl.validation.VotingValidation;
+import com.likeit.web.dao.DAOFactory;
+import com.likeit.web.dao.VotingDAO;
+import com.likeit.web.dao.exception.DAOException;
+import com.likeit.web.domain.Vote;
+import com.likeit.web.service.VotingService;
+import com.likeit.web.service.exception.ServiceException;
+import com.likeit.web.service.impl.validation.VotingValidation;
 
 public class VotingServiceImpl implements VotingService {
 

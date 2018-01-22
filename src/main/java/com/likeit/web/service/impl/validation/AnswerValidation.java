@@ -1,14 +1,14 @@
-package main.java.com.likeit.web.service.impl.validation;
+package com.likeit.web.service.impl.validation;
 
-import main.java.com.likeit.web.dao.AnswerDAO;
-import main.java.com.likeit.web.dao.DAOFactory;
-import main.java.com.likeit.web.dao.QuestionDAO;
-import main.java.com.likeit.web.dao.UserDAO;
-import main.java.com.likeit.web.dao.exception.DAOException;
-import main.java.com.likeit.web.domain.Answer;
-import main.java.com.likeit.web.domain.Question;
-import main.java.com.likeit.web.domain.User;
-import main.java.com.likeit.web.service.exception.ServiceException;
+import com.likeit.web.dao.AnswerDAO;
+import com.likeit.web.dao.DAOFactory;
+import com.likeit.web.dao.QuestionDAO;
+import com.likeit.web.dao.UserDAO;
+import com.likeit.web.dao.exception.DAOException;
+import com.likeit.web.domain.Answer;
+import com.likeit.web.domain.Question;
+import com.likeit.web.domain.User;
+import com.likeit.web.service.exception.ServiceException;
 
 public class AnswerValidation {
 

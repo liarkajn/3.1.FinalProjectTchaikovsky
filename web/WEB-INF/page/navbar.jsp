@@ -13,6 +13,22 @@
 <fmt:message bundle="${loc}" key="local.profilebutton.name" var="profileBtnName"/>
 <fmt:message bundle="${loc}" key="local.logoutbutton.name" var="logOutBtnName"/>
 
+<header>
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="questions.html">LikeIT</a>
+            <a class="nav-link active" href="#">Profile</a>
+            <a class="nav-link" href="#">My questions</a>
+            <a class="nav-link" href="#">Ask question</a>
+            <div class="user-bar">
+                <input class="search" type="text" placeholder="Search">
+                <a class="nav-link" href="#">Sign in</a> <!-- example of sign in link -->
+                <a class="nav-link" href="registration.html">Sign up</a> <!-- example of sign up link -->
+            </div>
+        </div>
+    </nav>
+</header>
+
 <div align="center">
     <div class="nav">
         <div class="logo">

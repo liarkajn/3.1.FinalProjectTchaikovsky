@@ -1,7 +1,7 @@
-package main.java.com.likeit.web.dao;
+package com.likeit.web.dao;
 
-import main.java.com.likeit.web.dao.exception.DAOException;
-import main.java.com.likeit.web.domain.Question;
+import com.likeit.web.dao.exception.DAOException;
+import com.likeit.web.domain.Question;
 
 import java.util.List;
 

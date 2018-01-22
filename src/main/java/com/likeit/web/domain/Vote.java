@@ -1,4 +1,4 @@
-package main.java.com.likeit.web.domain;
+package com.likeit.web.domain;
 
 import java.io.Serializable;
 

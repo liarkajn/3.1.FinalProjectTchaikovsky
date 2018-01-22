@@ -1,4 +1,4 @@
-package main.java.com.likeit.web.dao.exception;
+package com.likeit.web.dao.exception;
 
 public class DAOException extends Exception {
 

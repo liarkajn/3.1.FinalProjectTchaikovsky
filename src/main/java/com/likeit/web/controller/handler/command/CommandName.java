@@ -1,4 +1,4 @@
-package main.java.com.likeit.web.controller.handler.command;
+package com.likeit.web.controller.handler.command;
 
 public enum CommandName {
 
@@ -14,7 +14,6 @@ public enum CommandName {
     ANSWER_EDITING,
     VOTE_CREATION,
     PROFILE,
-    ADMINISTRATION_PANEL,
     LOGOUT,
     ERROR
 

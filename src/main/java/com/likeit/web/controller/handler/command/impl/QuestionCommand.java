@@ -1,10 +1,10 @@
-package main.java.com.likeit.web.controller.handler.command.impl;
+package com.likeit.web.controller.handler.command.impl;
 
-import main.java.com.likeit.web.controller.handler.command.Command;
-import main.java.com.likeit.web.service.AnswerService;
-import main.java.com.likeit.web.service.QuestionService;
-import main.java.com.likeit.web.service.ServiceFactory;
-import main.java.com.likeit.web.service.exception.ServiceException;
+import com.likeit.web.controller.handler.command.Command;
+import com.likeit.web.service.AnswerService;
+import com.likeit.web.service.QuestionService;
+import com.likeit.web.service.ServiceFactory;
+import com.likeit.web.service.exception.ServiceException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

@@ -1,6 +1,9 @@
-package main.java.com.likeit.web.controller;
+package com.likeit.web.controller;
 
-import main.java.com.likeit.web.controller.handler.Handler;
+import com.likeit.web.controller.handler.AdminHandler;
+import com.likeit.web.controller.handler.Handler;
+import com.likeit.web.dao.connector.ConnectionPool;
+import com.likeit.web.dao.connector.ConnectionPoolException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,13 +13,28 @@ import java.io.IOException;
 
 public class FrontController extends HttpServlet {
 
+    private final static String ADMINISTRATION_PAGE_PARAMETER = "isAdminPage";
     private final static String LOCAL_FIELD_NAME = "local";
     private final static String QUESTIONS_PAGE = "/main?command=questions";
+    private final AdminHandler adminHandler = new AdminHandler();
     private final Handler handler = new Handler();
 
     @Override
+    public void init() throws ServletException {
+        try {
+            ConnectionPool.getInstance().initPoolData();
+        } catch (ConnectionPoolException e) {
+            throw new RuntimeException("Unable initialize connection pool");
+        }
+    }
+
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        handler.execute(request, response);
+        if (request.getAttribute(ADMINISTRATION_PAGE_PARAMETER) != null) {
+            adminHandler.execute(request, response);
+        } else {
+            handler.execute(request, response);
+        }
     }
 
     @Override

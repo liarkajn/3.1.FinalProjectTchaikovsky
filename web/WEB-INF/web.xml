@@ -6,12 +6,33 @@
 
     <servlet>
         <servlet-name>FrontController</servlet-name>
-        <servlet-class>main.java.com.likeit.web.controller.FrontController</servlet-class>
+        <servlet-class>com.likeit.web.controller.FrontController</servlet-class>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>FrontController</servlet-name>
         <url-pattern>/main</url-pattern>
+        <url-pattern>/administration</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminEntryPoint</servlet-name>
+        <jsp-file>/WEB-INF/page/administration/entry_point.jsp</jsp-file>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminEntryPoint</servlet-name>
+        <url-pattern>/administration/authorization</url-pattern>
+    </servlet-mapping>
+
+    <filter>
+        <filter-name>UrlFilter</filter-name>
+        <filter-class>com.likeit.web.controller.filter.PathFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>UrlFilter</filter-name>
+        <url-pattern>/administration</url-pattern>
+    </filter-mapping>
 
 </web-app>

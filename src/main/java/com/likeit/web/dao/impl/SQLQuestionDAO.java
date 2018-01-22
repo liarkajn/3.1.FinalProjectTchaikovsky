@@ -1,12 +1,13 @@
-package main.java.com.likeit.web.dao.impl;
+package com.likeit.web.dao.impl;
 
-import main.java.com.likeit.web.dao.DAOFactory;
-import main.java.com.likeit.web.dao.QuestionDAO;
-import main.java.com.likeit.web.dao.UserDAO;
-import main.java.com.likeit.web.dao.connector.Connector;
-import main.java.com.likeit.web.dao.exception.DAOException;
-import main.java.com.likeit.web.domain.Question;
-import main.java.com.likeit.web.domain.User;
+import com.likeit.web.dao.DAOFactory;
+import com.likeit.web.dao.QuestionDAO;
+import com.likeit.web.dao.UserDAO;
+import com.likeit.web.dao.connector.ConnectionPool;
+import com.likeit.web.dao.connector.ConnectionPoolException;
+import com.likeit.web.dao.exception.DAOException;
+import com.likeit.web.domain.Question;
+import com.likeit.web.domain.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,16 +19,16 @@ import java.util.List;
 
 public class SQLQuestionDAO implements QuestionDAO {
 
-    private final static String createQuestion = "INSERT INTO question (author_id, topic, content, publish_date) VALUES (?, ?, ?, ?);";
+    private final static String createQuestion = "INSERT INTO question (author_id, topic, content, creation_time) VALUES (?, ?, ?, ?);";
     private final static String updateQuestionById = "UPDATE question SET topic=?, content=? WHERE id=?";
     private final static String readQuestionById = "SELECT * FROM question WHERE id=?";
-    private final static String readQuestions = "SELECT * FROM question ORDER BY publish_date DESC";
-    private final static String readQuestionsBySearchString = "SELECT * FROM question WHERE topic LIKE ? ORDER BY publish_date DESC";
+    private final static String readQuestions = "SELECT * FROM question ORDER BY creation_time DESC";
+    private final static String readQuestionsBySearchString = "SELECT * FROM question WHERE topic LIKE ? ORDER BY creation_time DESC";
     private final static String readQuestionsByUserId = "SELECT * FROM question WHERE author_id=?";
 
     @Override
     public void createQuestion(String topic, String content, int authorId) throws DAOException {
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(createQuestion)) {
 
             preparedStatement.setInt(1, authorId);
@@ -37,7 +38,8 @@ public class SQLQuestionDAO implements QuestionDAO {
 
             preparedStatement.executeUpdate();
 
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
+//        } catch (SQLException e) {
             throw new DAOException("Problems with database operations. Unable save question", e);
         }
     }
@@ -45,22 +47,22 @@ public class SQLQuestionDAO implements QuestionDAO {
     @Override
     public Question readQuestion(int id) throws DAOException {
         Question question = null;
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(readQuestionById)) {
             preparedStatement.setInt(1, id);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     question = new Question();
-                    int authorId = resultSet.getInt(2);
+                    int authorId = resultSet.getInt(4);
                     User author = DAOFactory.getInstance().getUserDAO().readUser(authorId);
                     question.setId(resultSet.getInt(1));
                     question.setAuthor(author);
-                    question.setTopic(resultSet.getString(3));
-                    question.setContent(resultSet.getString(4));
+                    question.setTopic(resultSet.getString(2));
+                    question.setContent(resultSet.getString(3));
                     question.setPublishDate(resultSet.getTimestamp(5).toLocalDateTime());
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable read question with id " + id, e);
         }
         return question;
@@ -70,23 +72,23 @@ public class SQLQuestionDAO implements QuestionDAO {
     public List<Question> readQuestions() throws DAOException {
         List<Question> result = new LinkedList<>();
         UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(readQuestions)) {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     Question question = new Question();
-                    int authorId = resultSet.getInt(2);
+                    int authorId = resultSet.getInt(4);
                     User author = userDAO.readUser(authorId);
                     question.setId(resultSet.getInt(1));
                     question.setAuthor(author);
-                    question.setTopic(resultSet.getString(3));
-                    question.setContent(resultSet.getString(4));
+                    question.setTopic(resultSet.getString(2));
+                    question.setContent(resultSet.getString(3));
                     question.setPublishDate(resultSet.getTimestamp(5).toLocalDateTime());
                     result.add(question);
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable read question list", e);
         }
         return result;
@@ -95,7 +97,7 @@ public class SQLQuestionDAO implements QuestionDAO {
     @Override
     public List<Question> readQuestionsBySearchString(String searchString) throws DAOException {
         List<Question> result;
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(readQuestionsBySearchString)) {
 
             preparedStatement.setString(1, "%" + searchString + "%");
@@ -103,7 +105,7 @@ public class SQLQuestionDAO implements QuestionDAO {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 result = extractQuestions(resultSet);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable search questions", e);
         }
         return result;
@@ -112,7 +114,7 @@ public class SQLQuestionDAO implements QuestionDAO {
     @Override
     public List<Question> readQuestionsByAuthorId(int authorId) throws DAOException {
         List<Question> result;
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(readQuestionsByUserId)) {
 
             preparedStatement.setInt(1, authorId);
@@ -120,7 +122,7 @@ public class SQLQuestionDAO implements QuestionDAO {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 result = extractQuestions(resultSet);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable find questions by author id : " + authorId, e);
         }
         return result;
@@ -131,12 +133,12 @@ public class SQLQuestionDAO implements QuestionDAO {
         UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
         while (resultSet.next()) {
             Question question = new Question();
-            int authorId = resultSet.getInt(2);
+            int authorId = resultSet.getInt(4);
             User author = userDAO.readUser(authorId);
             question.setId(resultSet.getInt(1));
             question.setAuthor(author);
-            question.setTopic(resultSet.getString(3));
-            question.setContent(resultSet.getString(4));
+            question.setTopic(resultSet.getString(2));
+            question.setContent(resultSet.getString(3));
             question.setPublishDate(resultSet.getTimestamp(5).toLocalDateTime());
             result.add(question);
         }
@@ -145,7 +147,7 @@ public class SQLQuestionDAO implements QuestionDAO {
 
     @Override
     public void updateQuestion(Question question) throws DAOException {
-        try (Connection connection = Connector.getConnection();
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(updateQuestionById)) {
 
             preparedStatement.setString(1, question.getTopic());
@@ -154,7 +156,7 @@ public class SQLQuestionDAO implements QuestionDAO {
 
             preparedStatement.executeUpdate();
 
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable update question with id : " + question.getId(), e);
         }
     }

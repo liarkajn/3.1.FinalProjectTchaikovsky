@@ -1,12 +1,12 @@
-package main.java.com.likeit.web.service.impl;
+package com.likeit.web.service.impl;
 
-import main.java.com.likeit.web.dao.DAOFactory;
-import main.java.com.likeit.web.dao.QuestionDAO;
-import main.java.com.likeit.web.dao.exception.DAOException;
-import main.java.com.likeit.web.domain.Question;
-import main.java.com.likeit.web.service.QuestionService;
-import main.java.com.likeit.web.service.exception.ServiceException;
-import main.java.com.likeit.web.service.impl.validation.QuestionValidation;
+import com.likeit.web.dao.DAOFactory;
+import com.likeit.web.dao.QuestionDAO;
+import com.likeit.web.dao.exception.DAOException;
+import com.likeit.web.domain.Question;
+import com.likeit.web.service.QuestionService;
+import com.likeit.web.service.exception.ServiceException;
+import com.likeit.web.service.impl.validation.QuestionValidation;
 
 import java.util.List;
 
@@ -67,11 +67,16 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void editQuestion(int authorId, int questionId, String topic, String content) throws ServiceException {
         questionValidation.validateQuestionEditing(authorId,questionId, topic, content);
-        QuestionDAO questionDAO = DAOFactory.getInstance().getQuestionDAO();
         Question question = new Question();
         question.setId(questionId);
         question.setTopic(topic);
         question.setContent(content);
+        editQuestion(question);
+    }
+
+    @Override
+    public void editQuestion(Question question) throws ServiceException {
+        QuestionDAO questionDAO = DAOFactory.getInstance().getQuestionDAO();
         try {
             questionDAO.updateQuestion(question);
         } catch (DAOException e) {

@@ -4,7 +4,8 @@
 <html>
 <head>
     <title>Main page</title>
-    <link rel="stylesheet" href=“css/normalize.css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <%--<link rel="stylesheet" href="css/questionnaire.css">--%>
     <link rel="stylesheet" type="text/css" href="css/main.css">
 
     <fmt:setLocale value="${sessionScope.local}"/>

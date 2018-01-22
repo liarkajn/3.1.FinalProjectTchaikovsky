@@ -1,12 +1,12 @@
-package main.java.com.likeit.web.service.impl;
+package com.likeit.web.service.impl;
 
-import main.java.com.likeit.web.dao.AnswerDAO;
-import main.java.com.likeit.web.dao.DAOFactory;
-import main.java.com.likeit.web.dao.exception.DAOException;
-import main.java.com.likeit.web.domain.Answer;
-import main.java.com.likeit.web.service.AnswerService;
-import main.java.com.likeit.web.service.exception.ServiceException;
-import main.java.com.likeit.web.service.impl.validation.AnswerValidation;
+import com.likeit.web.dao.AnswerDAO;
+import com.likeit.web.dao.DAOFactory;
+import com.likeit.web.dao.exception.DAOException;
+import com.likeit.web.domain.Answer;
+import com.likeit.web.service.AnswerService;
+import com.likeit.web.service.exception.ServiceException;
+import com.likeit.web.service.impl.validation.AnswerValidation;
 
 import java.util.List;
 
@@ -73,7 +73,7 @@ public class AnswerServiceImpl implements AnswerService {
         } catch (DAOException e) {
             throw new ServiceException("Unable update answer with id : " + answerId, e);
         }
-        return answer;
+        return findAnswer(answerId);
     }
 
 }

@@ -1,6 +1,6 @@
-package main.java.com.likeit.web.controller.handler.command;
+package com.likeit.web.controller.handler.command;
 
-import main.java.com.likeit.web.controller.handler.command.impl.*;
+import com.likeit.web.controller.handler.command.impl.*;
 
 import java.util.HashMap;
 import java.util.Map;
