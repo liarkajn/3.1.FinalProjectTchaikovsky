@@ -22,9 +22,13 @@ public class SQLQuestionDAO implements QuestionDAO {
     private final static String createQuestion = "INSERT INTO question (author_id, topic, content, creation_time) VALUES (?, ?, ?, ?);";
     private final static String updateQuestionById = "UPDATE question SET topic=?, content=? WHERE id=?";
     private final static String readQuestionById = "SELECT * FROM question WHERE id=?";
-    private final static String readQuestions = "SELECT * FROM question ORDER BY creation_time DESC";
-    private final static String readQuestionsBySearchString = "SELECT * FROM question WHERE topic LIKE ? ORDER BY creation_time DESC";
-    private final static String readQuestionsByUserId = "SELECT * FROM question WHERE author_id=?";
+    private final static String readQuestions = "SELECT * FROM question ORDER BY creation_time DESC LIMIT ? OFFSET ?";
+    private final static String readQuestionsBySearchString = "SELECT * FROM question WHERE topic LIKE ? ORDER BY creation_time DESC LIMIT ? OFFSET ?";
+    private final static String readQuestionsByUserId = "SELECT * FROM question WHERE author_id=? ORDER BY creation_time DESC LIMIT ? OFFSET ?";
+    private final static String readQuestionsCount = "SELECT COUNT(*) FROM question";
+    private final static String readQuestionsCountBySearchString = "SELECT COUNT(*) FROM question WHERE topic LIKE ?";
+    private final static String readQuestionsCountByAuthorId = "SELECT COUNT(*) FROM question WHERE author_id=?;";
+    private final static String deleteQuestionById = "DELETE FROM question WHERE id=?";
 
     @Override
     public void createQuestion(String topic, String content, int authorId) throws DAOException {
@@ -39,7 +43,6 @@ public class SQLQuestionDAO implements QuestionDAO {
             preparedStatement.executeUpdate();
 
         } catch (SQLException | ConnectionPoolException e) {
-//        } catch (SQLException e) {
             throw new DAOException("Problems with database operations. Unable save question", e);
         }
     }
@@ -69,11 +72,14 @@ public class SQLQuestionDAO implements QuestionDAO {
     }
 
     @Override
-    public List<Question> readQuestions() throws DAOException {
+    public List<Question> readQuestions(int limit, int offset) throws DAOException {
         List<Question> result = new LinkedList<>();
         UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
         try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(readQuestions)) {
+
+            preparedStatement.setInt(1, limit);
+            preparedStatement.setInt(2, offset);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -95,12 +101,14 @@ public class SQLQuestionDAO implements QuestionDAO {
     }
 
     @Override
-    public List<Question> readQuestionsBySearchString(String searchString) throws DAOException {
+    public List<Question> readQuestionsBySearchString(int limit, int offset, String searchString) throws DAOException {
         List<Question> result;
         try (Connection connection = ConnectionPool.getInstance().takeConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(readQuestionsBySearchString)) {
 
             preparedStatement.setString(1, "%" + searchString + "%");
+            preparedStatement.setInt(2, limit);
+            preparedStatement.setInt(3, offset);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 result = extractQuestions(resultSet);
@@ -118,6 +126,8 @@ public class SQLQuestionDAO implements QuestionDAO {
              PreparedStatement preparedStatement = connection.prepareStatement(readQuestionsByUserId)) {
 
             preparedStatement.setInt(1, authorId);
+            preparedStatement.setInt(2, 7);
+            preparedStatement.setInt(3, 0);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 result = extractQuestions(resultSet);
@@ -162,8 +172,74 @@ public class SQLQuestionDAO implements QuestionDAO {
     }
 
     @Override
-    public void deleteQuestion(int id) throws DAOException {
+    public int readQuestionsCount() throws DAOException {
+        int count = 0;
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(readQuestionsCount)) {
 
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    count = resultSet.getInt(1);
+                }
+            }
+
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Problems with database operations. Unable read questions count", e);
+        }
+        return count;
+    }
+
+    @Override
+    public int readQuestionsCount(String searchString) throws DAOException {
+        int count = 0;
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(readQuestionsCountBySearchString)) {
+
+            preparedStatement.setString(1, '%' + searchString + '%');
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    count = resultSet.getInt(1);
+                }
+            }
+
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Problems with database operations. Unable read questions count", e);
+        }
+        return count;
+    }
+
+    @Override
+    public int readQuestionsCount(int authorId) throws DAOException {
+        int count = 0;
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(readQuestionsCountByAuthorId)) {
+
+            preparedStatement.setInt(1, authorId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    count = resultSet.getInt(1);
+                }
+            }
+
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Problems with database operations. Unable read questions count", e);
+        }
+        return count;
+    }
+
+    @Override
+    public void deleteQuestion(int id) throws DAOException {
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(deleteQuestionById)) {
+
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Problems with database operations. Unable delete question with id " + id, e);
+        }
     }
 
 }

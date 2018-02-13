@@ -19,6 +19,8 @@ public class AdminCommandProvider {
         commands.put(AdminCommandName.USER, new UserCommand());
         commands.put(AdminCommandName.USER_EDITING, new UserEditingCommand());
         commands.put(AdminCommandName.QUESTION_EDITING, new QuestionEditingCommand());
+        commands.put(AdminCommandName.QUESTION_DELETING, new QuestionDeletingCommand());
+        commands.put(AdminCommandName.BAN, new BanCommand());
     }
 
     public Command getCommand(String name) {

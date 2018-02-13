@@ -1,9 +1,6 @@
 package com.likeit.web.dao.impl;
 
-import com.likeit.web.dao.AnswerDAO;
-import com.likeit.web.dao.DAOFactory;
-import com.likeit.web.dao.QuestionDAO;
-import com.likeit.web.dao.UserDAO;
+import com.likeit.web.dao.*;
 import com.likeit.web.dao.connector.ConnectionPool;
 import com.likeit.web.dao.connector.ConnectionPoolException;
 import com.likeit.web.dao.exception.DAOException;
@@ -25,6 +22,7 @@ public class SQLAnswerDAO implements AnswerDAO {
     private final static String readAnswerById = "SELECT * FROM answer WHERE id=?";
     private final static String readAnswersByQuestionId = "SELECT * FROM answer WHERE question_id=?";
     private final static String updateAnswerById = "UPDATE answer SET content=? WHERE id=?";
+    private final static String readAnswersCountByAuthorId = "SELECT COUNT(*) FROM answer WHERE author_id=?";
 
     public SQLAnswerDAO() {
 
@@ -59,6 +57,7 @@ public class SQLAnswerDAO implements AnswerDAO {
             QuestionDAO questionDAO = DAOFactory.getInstance().getQuestionDAO();
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                VotingDAO votingDAO = DAOFactory.getInstance().getVotingDAO();
                 while (resultSet.next()) {
                     answer = new Answer();
                     answer.setId(resultSet.getInt(1));
@@ -68,6 +67,7 @@ public class SQLAnswerDAO implements AnswerDAO {
                     answer.setPublishDate(resultSet.getTimestamp(4).toLocalDateTime());
                     Question question = questionDAO.readQuestion(resultSet.getInt(5));
                     answer.setQuestion(question);
+                    answer.setVote(votingDAO.readVoteByAnswer(answer.getId()));
                 }
             }
 
@@ -89,6 +89,7 @@ public class SQLAnswerDAO implements AnswerDAO {
             preparedStatement.setInt(1, questionId);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                VotingDAO votingDAO = DAOFactory.getInstance().getVotingDAO();
                 while (resultSet.next()) {
                     Answer answer = new Answer();
                     answer.setId(resultSet.getInt(1));
@@ -96,6 +97,7 @@ public class SQLAnswerDAO implements AnswerDAO {
                     answer.setAuthor(author);
                     answer.setQuestion(question);
                     answer.setContent(resultSet.getString(2));
+                    answer.setVote(votingDAO.readVoteByAnswer(answer.getId()));
                     answer.setPublishDate(resultSet.getTimestamp(4).toLocalDateTime());
                     answers.add(answer);
                 }
@@ -125,6 +127,26 @@ public class SQLAnswerDAO implements AnswerDAO {
         } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable update answer with id : " + answer.getId(), e);
         }
+    }
+
+    @Override
+    public int readAnswersCount(int authorId) throws DAOException {
+        int count = 0;
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(readAnswersCountByAuthorId)) {
+
+            preparedStatement.setInt(1, authorId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    count = resultSet.getInt(1);
+                }
+            }
+
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Problems with database operations. Unable read answers count", e);
+        }
+        return count;
     }
 
     @Override

@@ -39,12 +39,12 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<Question> findAllQuestions() throws ServiceException {
+    public List<Question> findAllQuestions(int limit, int page) throws ServiceException {
         List<Question> questions;
         DAOFactory daoFactory = DAOFactory.getInstance();
         QuestionDAO questionDAO = daoFactory.getQuestionDAO();
         try {
-            questions = questionDAO.readQuestions();
+            questions = questionDAO.readQuestions(limit, limit * (page - 1));
         } catch (DAOException ex) {
             throw new ServiceException("Unable find question list. Please, try later", ex);
         }
@@ -52,12 +52,12 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<Question> findQuestionsByTopic(String searchString) throws ServiceException {
+    public List<Question> findQuestionsByTopic(int limit, int page, String searchString) throws ServiceException {
         List<Question> questions;
         DAOFactory daoFactory = DAOFactory.getInstance();
         QuestionDAO questionDAO = daoFactory.getQuestionDAO();
         try {
-            questions = questionDAO.readQuestionsBySearchString(searchString);
+            questions = questionDAO.readQuestionsBySearchString(limit, limit * (page - 1), searchString);
         } catch (DAOException ex) {
             throw new ServiceException("Unable search questions. Please, try later", ex);
         }
@@ -81,6 +81,56 @@ public class QuestionServiceImpl implements QuestionService {
             questionDAO.updateQuestion(question);
         } catch (DAOException e) {
             throw new ServiceException("Unable update question by id", e);
+        }
+    }
+
+    @Override
+    public int getQuestionsCount() throws ServiceException {
+        int count;
+        DAOFactory daoFactory = DAOFactory.getInstance();
+        QuestionDAO questionDAO = daoFactory.getQuestionDAO();
+        try {
+            count = questionDAO.readQuestionsCount();
+        } catch (DAOException e) {
+            throw new ServiceException("Unable get questions count", e);
+        }
+        return count;
+    }
+
+    @Override
+    public int getQuestionsCount(String searchString) throws ServiceException {
+        int count;
+        DAOFactory daoFactory = DAOFactory.getInstance();
+        QuestionDAO questionDAO = daoFactory.getQuestionDAO();
+        try {
+            count = questionDAO.readQuestionsCount(searchString);
+        } catch (DAOException e) {
+            throw new ServiceException("Unable get questions count", e);
+        }
+        return count;
+    }
+
+    @Override
+    public int getQuestionsCount(int authorId) throws ServiceException {
+        int count;
+        DAOFactory daoFactory = DAOFactory.getInstance();
+        QuestionDAO questionDAO = daoFactory.getQuestionDAO();
+        try {
+            count = questionDAO.readQuestionsCount(authorId);
+        } catch (DAOException e) {
+            throw new ServiceException("Unable get questions count", e);
+        }
+        return count;
+    }
+
+    @Override
+    public void deleteQuestion(int id) throws ServiceException {
+        DAOFactory daoFactory = DAOFactory.getInstance();
+        QuestionDAO questionDAO = daoFactory.getQuestionDAO();
+        try {
+            questionDAO.deleteQuestion(id);
+        } catch (DAOException e) {
+            throw new ServiceException("Unable delete question with id : " + id, e);
         }
     }
 

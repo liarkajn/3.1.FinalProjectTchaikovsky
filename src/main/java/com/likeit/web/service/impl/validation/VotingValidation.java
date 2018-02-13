@@ -26,9 +26,6 @@ public class VotingValidation {
         } catch (DAOException e) {
             throw new ServiceException("Unable find answer with id : " + authorId);
         }
-        if (answer.getAuthor().getId() == author.getId()) {
-            throw new ServiceException("Unable vote to your answer");
-        }
         if (mark > 5 && mark < 0) {
             throw new ServiceException("Incorrect mark value");
         }

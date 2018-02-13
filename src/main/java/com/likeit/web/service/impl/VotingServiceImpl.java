@@ -19,7 +19,13 @@ public class VotingServiceImpl implements VotingService {
         VotingDAO votingDAO = DAOFactory.getInstance().getVotingDAO();
 
         try {
-            votingDAO.createVote(authorId, answerId, mark);
+            Vote vote = votingDAO.readVoteByAnswer(answerId);
+            if (vote != null) {
+                vote.setMark(mark);
+                votingDAO.updateVote(vote);
+            } else {
+                votingDAO.createVote(authorId, answerId, mark);
+            }
         } catch (DAOException ex) {
             throw new ServiceException();
         }

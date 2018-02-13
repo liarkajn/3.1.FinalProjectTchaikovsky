@@ -47,6 +47,14 @@
         </div>
         <input type="submit" value="Edit" />
     </form>
+    <c:choose>
+        <c:when test="${requestScope.user.banned == false}">
+            <a href="/administration?command=ban&ban=true&id=<c:out value="${requestScope.user.id}"/>">ban</a>
+        </c:when>
+        <c:otherwise>
+            <a href="/administration?command=ban&ban=false&id=<c:out value="${requestScope.user.id}"/>">unban</a>
+        </c:otherwise>
+    </c:choose>
 </main>
 
 <script>

@@ -9,6 +9,7 @@ public class Answer implements Serializable {
     private User author;
     private Question question;
     private String content;
+    private Vote vote;
     private LocalDateTime publishDate;
 
     public int getId() {
@@ -43,6 +44,14 @@ public class Answer implements Serializable {
         this.content = content;
     }
 
+    public Vote getVote() {
+        return vote;
+    }
+
+    public void setVote(Vote vote) {
+        this.vote = vote;
+    }
+
     public LocalDateTime getPublishDate() {
         return publishDate;
     }
@@ -54,7 +63,7 @@ public class Answer implements Serializable {
     @Override
     public int hashCode() {
         return 107 * id + author.hashCode() + question.hashCode() +
-                content.hashCode() + publishDate.hashCode();
+                content.hashCode() + vote.hashCode() + publishDate.hashCode();
     }
 
     @Override
@@ -74,7 +83,7 @@ public class Answer implements Serializable {
         }
         return id == answer.id && author.equals(answer.author)
                 && question.equals(answer.question) && content.equals(answer.content)
-                && publishDate.equals(answer.publishDate);
+                && vote.equals(answer.vote) && publishDate.equals(answer.publishDate);
     }
 
     @Override
@@ -83,6 +92,7 @@ public class Answer implements Serializable {
                 "\nauthor : " + author +
                 "\nquestion : " + question +
                 "\ncontent : " + content +
+                "\nvote : " + vote +
                 "\npublish date : " + publishDate;
     }
 

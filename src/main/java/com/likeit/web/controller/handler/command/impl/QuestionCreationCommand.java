@@ -1,7 +1,6 @@
 package com.likeit.web.controller.handler.command.impl;
 
 import com.likeit.web.controller.handler.command.Command;
-import com.likeit.web.domain.Question;
 import com.likeit.web.service.QuestionService;
 import com.likeit.web.service.ServiceFactory;
 import com.likeit.web.service.exception.ServiceException;
@@ -13,28 +12,24 @@ import java.io.IOException;
 
 public class QuestionCreationCommand implements Command {
 
-    private final static String QUESTION_ID_PARAMETER_NAME = "question_id";
-    private final static String QUESTION_ID_ATTRIBUTE_NAME = "questionId";
-    private final static String QUESTION_TOPIC_ATTRIBUTE_NAME = "topic";
-    private final static String QUESTION_CONTENT_ATTRIBUTE_NAME = "content";
-    private final static String QUESTION_CREATION_PAGE = "/WEB-INF/page/question_creation.jsp";
+    private final static String USER_ID_SESSION_FIELD_NAME = "id";
+    private final static String TOPIC_FIELD_NAME = "topic";
+    private final static String CONTENT_FIELD_NAME = "content";
+    private final static String QUESTIONS_PAGE = "?command=questions";
     private final static String ERROR_PAGE = "?command=error&&message=";
     private final QuestionService questionService = ServiceFactory.getInstance().getQuestionService();
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getParameter(QUESTION_ID_PARAMETER_NAME) != null) {
-            int questionId = Integer.parseInt(request.getParameter(QUESTION_ID_PARAMETER_NAME));
-            try {
-                Question question = questionService.findQuestion(questionId);
-                request.setAttribute(QUESTION_ID_ATTRIBUTE_NAME, questionId);
-                request.setAttribute(QUESTION_TOPIC_ATTRIBUTE_NAME, question.getTopic());
-                request.setAttribute(QUESTION_CONTENT_ATTRIBUTE_NAME, question.getContent());
-            } catch (ServiceException e) {
-                response.sendRedirect(ERROR_PAGE + e.getMessage());
-            }
+        int authorId = Integer.parseInt(request.getSession(true).getAttribute(USER_ID_SESSION_FIELD_NAME).toString());
+        String topic = request.getParameter(TOPIC_FIELD_NAME);
+        String content = request.getParameter(CONTENT_FIELD_NAME);
+        try {
+            questionService.createQuestion(topic, content, authorId);
+            response.sendRedirect(QUESTIONS_PAGE);
+        } catch (ServiceException ex) {
+            response.sendRedirect(ERROR_PAGE + ex.getMessage());
         }
-        request.getRequestDispatcher(QUESTION_CREATION_PAGE).forward(request, response);
     }
 
 }

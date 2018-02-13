@@ -12,6 +12,8 @@ import java.io.IOException;
 
 public class QuestionsCommand implements Command {
 
+    private final static int questionsPerPage = 7;
+    private final static int firstPage = 1;
     private final static String QUESTIONS_FIELD_NAME = "questions";
     private final static String AUTHORIZATION_PAGE = "/administration/authorization";
     private final static String QUESTIONS_PAGE = "/WEB-INF/page/administration/questions.jsp";
@@ -25,7 +27,7 @@ public class QuestionsCommand implements Command {
             return;
         }
         try {
-            request.setAttribute(QUESTIONS_FIELD_NAME, questionService.findAllQuestions());
+            request.setAttribute(QUESTIONS_FIELD_NAME, questionService.findAllQuestions(questionsPerPage, firstPage));
             request.getRequestDispatcher(QUESTIONS_PAGE).forward(request, response);
         }
         catch (ServiceException ex) {

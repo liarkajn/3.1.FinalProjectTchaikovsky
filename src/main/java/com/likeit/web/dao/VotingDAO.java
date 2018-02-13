@@ -7,5 +7,8 @@ public interface VotingDAO {
 
     void createVote(int authorId, int answerId, int mark) throws DAOException;
     Vote readVote(int voteId) throws DAOException;
+    Vote readVoteByAnswer(int answerId) throws DAOException;
+    void updateVote(Vote vote) throws DAOException;
+    double readAverageMark(int authorId) throws DAOException;
 
 }

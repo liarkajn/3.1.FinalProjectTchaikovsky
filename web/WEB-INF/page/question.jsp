@@ -1,12 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
 <head>
     <title>
         <c:out value="${requestScope.question.topic}"/>
     </title>
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/questionnaire.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
     <fmt:setLocale value="${sessionScope.local}"/>
     <fmt:setBundle basename="local" var="loc"/>
     <fmt:message bundle="${loc}" key="local.question.answer.content.placeholder" var="answerPlaceholder"/>
@@ -17,100 +22,249 @@
 
 <jsp:include page="navbar.jsp"/>
 
-<div align="center">
-    <div class="card card-1">
-        <h1><c:out value="${requestScope.question.topic}"/></h1> <br/>
-        <c:out value="${requestScope.question.content}"/> <br/>
-        <c:out value="${requestScope.question.publishDate}"/> <br/>
-        <c:out value="${requestScope.question.author.login}"/> <br/>
-        <c:if test="${requestScope.question.author.id == sessionScope.id}">
-            <form action="main" method="get">
-                <input type="hidden" name="command" value="question_creation">
-                <input type="hidden" name="question_id" value="${requestScope.question.id}" />
-                <input type="submit" value="${editBtn}" />
-            </form>
-        </c:if>
-    </div>
-
-    <c:if test="${sessionScope.id != null && requestScope.question.author.id != sessionScope.id}">
-        <div class="card card-1">
-            <form action="main" method="get">
-                <input type="hidden" name="command" value="after_answer_creation"/>
-                <input type="hidden" name="question_id" value="${requestScope.question.id}"/>
-                <textarea name="content" placeholder="${answerPlaceholder}"></textarea> <br/>
-                <input type="submit" value="${answerBtnName}"/>
-            </form>
-        </div>
-    </c:if>
-
-    <c:if test="${requestScope.answers != null}">
-        <c:forEach items="${requestScope.answers}" var="answer">
-            <div class="card card-1">
-                <div id="${answer.id}">
-                    <c:out value="${answer.author.login}"/> <br/>
-                    <div class="content">
-                        <c:out value="${answer.content}"/>
+<main class="content">
+    <div class="container question">
+        <div class="row">
+            <div class="col-12 question_form">
+                <div class="row">
+                    <div class="col-md-3 col-lg-2 author-plate-md" align="center">
+                        <c:choose>
+                            <c:when test="${requestScope.question.author.gender == 'male'}">
+                                <img src="icons/ic_profile_male.png" class="profile-image">
+                            </c:when>
+                            <c:otherwise>
+                                <img src="icons/ic_profile_female.png" class="profile-image">
+                            </c:otherwise>
+                        </c:choose>
+                        <h6 class="signature"><a href="main?command=profile&id=<c:out value="${requestScope.question.author.id}"/>">
+                            <strong>
+                                <c:choose>
+                                    <c:when test="${requestScope.question.author.name != null && requestScope.question.author.surname != null}">
+                                        <c:out value="${requestScope.question.author.name}"/> <c:out value="${requestScope.question.author.surname}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:out value="${requestScope.question.author.login}"/>
+                                    </c:otherwise>
+                                </c:choose>
+                            </strong>
+                        </a></h6>
+                        <h6 class="author-plate-info">Answers: <c:out value="${requestScope.question.author.answersCount}" /></h6>
+                        <h6 class="author-plate-info">Questions: <c:out value="${requestScope.question.author.questionsCount}" /></h6>
+                        <h6 class="author-plate-info">Registered: <c:out value="${requestScope.question.author.registrationDate.toLocalDate()}" /></h6>
                     </div>
-                    <c:out value="${answer.publishDate}"/>
-                    <c:if test="${answer.author.id == sessionScope.id}">
-                        <input type="submit" value="${editBtn}" onclick="edit(event)"/>
-                    </c:if> <br/>
-                    <c:if test="${sessionScope.id != null && answer.author.id != sessionScope.id}">
-                        <form action="main" method="get">
-                            <input type="hidden" name="command" value="vote_creation"/>
-                            <input type="hidden" name="question_id" value="${requestScope.question.id}"/>
-                            <input type="hidden" name="answer_id" value="${answer.id}"/>
-                            <input type="number" name="vote" value="0"/>
-                            <input type="submit" value="Vote"/>
-                        </form>
-                    </c:if>
+                    <div class="col-12 col-md-9 col-lg-10">
+                        <h1 class="h1-responsive text-muted">
+                            <c:out value="${requestScope.question.topic}"/>
+                            <c:if test="${sessionScope.id == requestScope.question.author.id && fn:length(requestScope.answers) == 0}">
+                                <a href="main?command=go_to_question_editing&id=${requestScope.question.id}">
+                                    <img class="edit_btn" src="icons/open-iconic-master/svg/pencil.svg" alt="Edit" title="Edit">
+                                </a>
+                            </c:if>
+                        </h1>
+                        <h6 class="signature">Asked by <a href="main?command=profile&id=<c:out value="${requestScope.question.author.id}"/>">
+                            <strong>
+                                <c:choose>
+                                    <c:when test="${requestScope.question.author.name != null && requestScope.question.author.surname != null}">
+                                        <c:out value="${requestScope.question.author.name}"/> <c:out value="${requestScope.question.author.surname}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:out value="${requestScope.question.author.login}"/>
+                                    </c:otherwise>
+                                </c:choose>
+                            </strong>
+                        </a>, <c:out value="${requestScope.question.publishDate.toLocalDate()}"/> at <c:out value="${requestScope.question.publishDate.toLocalTime()}"/></h6>
+                        <p><c:out value="${requestScope.question.content}"/></p>
+                        <div class="author-plate">
+                            <div class="row">
+                                <div class="col-4">
+                                    <c:choose>
+                                        <c:when test="${requestScope.question.author.gender == 'male'}">
+                                            <img src="icons/ic_profile_male.png" class="profile-image">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <img src="icons/ic_profile_female.png" class="profile-image">
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                                <div class="col-8">
+                                    <h6 class="signature">
+                                        <a href="main?command=profile&id=<c:out value="${answer.author.id}"/>">
+                                        <strong>
+                                            <c:choose>
+                                                <c:when test="${requestScope.question.author.name != null && requestScope.question.author.surname != null}">
+                                                    <c:out value="${requestScope.question.author.name}"/> <c:out value="${requestScope.question.author.surname}"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:out value="${requestScope.question.author.login}"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </strong>
+                                        </a>
+                                    </h6>
+                                    <h6 class="small">Answers: <c:out value="${requestScope.question.author.answersCount}" /></h6>
+                                    <h6 class="small">Questions: <c:out value="${requestScope.question.author.questionsCount}" /></h6>
+                                    <h5 class="small">Registered: <c:out value="${requestScope.question.author.registrationDate.toLocalDate()}" /></h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </c:forEach>
-    </c:if>
+        </div>
 
-</div>
+        <br>
+        <br>
 
-<script type="text/javascript">
+        <div class="row">
+            <label align="center"><h3 class="text-muted"><c:out value="${fn:length(requestScope.answers)}"/> answers:</h3></label>
+        </div>
 
-    function edit(event) {
+        <c:if test="${requestScope.answers != null}">
+            <c:forEach items="${requestScope.answers}" var="answer">
+                <div class="row answer-md">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-3 col-lg-2 author-plate-md" align="center">
+                                <c:choose>
+                                    <c:when test="${answer.author.gender == 'male'}">
+                                        <img src="icons/ic_profile_male.png" class="profile-image">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="icons/ic_profile_female.png" class="profile-image">
+                                    </c:otherwise>
+                                </c:choose>
+                                <h6 class="signature">
+                                    <a href="main?command=profile&id=<c:out value="${answer.author.id}"/>">
+                                        <strong>
+                                            <c:choose>
+                                                <c:when test="${answer.author.name != null && answer.author.surname != null}">
+                                                    <c:out value="${answer.author.name}"/> <c:out value="${answer.author.surname}"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:out value="${answer.author.login}"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </strong>
+                                    </a>
+                                </h6>
+                                <h6 class="author-plate-info">Answers: <c:out value="${answer.author.answersCount}" /></h6>
+                                <h6 class="author-plate-info">Questions: <c:out value="${answer.author.questionsCount}" /></h6>
+                                <h6 class="author-plate-info">Registered: <c:out value="${answer.author.registrationDate.toLocalDate()}" /></h6>
+                            </div>
+                            <div class="col-md-9 col-lg-10">
+                                <p><c:out value="${answer.content}"/></p>
+                            </div>
+                        </div>
+                        <c:if test="${requestScope.question.author.id == sessionScope.id}" >
+                            <div class="row">
+                                <div class="stars m-auto">
+                                    <form action="main" method="get">
+                                        <input type="hidden" name="command" value="answer_rating" />
+                                        <input type="hidden" name="answer_id" value="${answer.id}" />
+                                        <input type="hidden" name="question_id" value="${requestScope.question.id}" />
+                                        <input type="number" max="5" name="rating" value="${answer.vote.mark}"/>
+                                            <%--<input class="star star-5" id="${answer.id}-5" type="radio" name="rating" value="1" />--%>
+                                            <%--<label class="star star-5" for="${answer.id}-5"></label>--%>
+                                            <%--<input class="star star-4" id="${answer.id}-4" type="radio" name="rating" value="2" />--%>
+                                            <%--<label class="star star-4" for="${answer.id}-4"></label>--%>
+                                            <%--<input class="star star-3" id="${answer.id}-3" type="radio" name="rating" value="3" />--%>
+                                            <%--<label class="star star-3" for="${answer.id}-3"></label>--%>
+                                            <%--<input class="star star-2" id="${answer.id}-2" type="radio" name="rating" value="4" />--%>
+                                            <%--<label class="star star-2" for="${answer.id}-2"></label>--%>
+                                            <%--<input class="star star-1" id="${answer.id}-1" type="radio" name="rating" value="5" />--%>
+                                            <%--<label class="star star-1" for="${answer.id}-1"></label>--%>
+                                    </form>
+                                </div>
+                            </div>
+                        </c:if>
+                        <div class="author-plate">
+                            <div class="row">
+                                <div class="col-4">
+                                    <c:choose>
+                                        <c:when test="${answer.author.gender == 'male'}">
+                                            <img src="icons/ic_profile_male.png" class="profile-image">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <img src="icons/ic_profile_female.png" class="profile-image">
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                                <div class="col-8">
+                                    <h6 class="signature">
+                                        <a href="main?command=profile&id=<c:out value="${answer.author.id}"/>">
+                                            <strong>
+                                                <c:choose>
+                                                    <c:when test="${answer.author.name != null && answer.author.surname != null}">
+                                                        <c:out value="${answer.author.name}"/> <c:out value="${answer.author.surname}"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <c:out value="${answer.author.login}"/>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </strong>
+                                        </a>
+                                    </h6>
+                                    <h6 class="author-plate-info">Answers: <c:out value="${answer.author.answersCount}" /></h6>
+                                    <h6 class="author-plate-info">Questions: <c:out value="${answer.author.questionsCount}" /></h6>
+                                    <h6 class="author-plate-info">Registered: <c:out value="${answer.author.registrationDate.toLocalDate()}" /></h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        var form = document.createElement('form');
-        form.action = 'main';
-        form.method = 'get';
+                <hr>
+            </c:forEach>
+        </c:if>
 
-        var current = event.currentTarget.parentNode;
-        var content = current.getElementsByClassName("content")[0].innerHTML;
+        <br>
+        <br>
+        <c:choose>
+            <c:when test="${sessionScope.id != null}">
+                <c:if test="${sessionScope.id != requestScope.question.author.id}">
+                    <form action="main" method="get">
+                        <div class="row">
+                            <div class="col-12 col-md-8 m-auto">
+                                <input type="hidden" name="command" value="answer_creation" />
+                                <input type="hidden" name="question_id" value="${requestScope.question.id}" />
+                                <h5>YOUR ANSWER:</h5>
+                                <textarea class="answer_area" name="content" placeholder="Your answer"></textarea>
+                                <input type="submit" class="btn btn-info" value="Answer">
+                            </div>
+                        </div>
+                    </form>
+                    <%--<c:set var="isAnswered" scope="request" value="false" />--%>
+                    <%--<c:forEach items="${requestScope.answers}" var="answer">--%>
+                        <%--<c:if test="${answer.author.id == sessionScope.id}">--%>
+                            <%--<c:set target="${isAnswered}" value="true"/>--%>
+                        <%--</c:if>--%>
+                    <%--</c:forEach>--%>
+                    <%--<c:if test="${isAnswered == false}">--%>
+                        <%--<form action="main" method="get">--%>
+                            <%--<div class="row">--%>
+                                <%--<div class="col-12 col-md-8 m-auto">--%>
+                                    <%--<input type="hidden" name="command" value="after_answer_creation" />--%>
+                                    <%--<input type="hidden" name="question_id" value="${requestScope.question.id}" />--%>
+                                    <%--<h5>YOUR ANSWER:</h5>--%>
+                                    <%--<textarea class="answer_area" name="content" placeholder="Your answer"></textarea>--%>
+                                    <%--<input type="submit" class="btn btn-info" value="Answer">--%>
+                                <%--</div>--%>
+                            <%--</div>--%>
+                        <%--</form>--%>
+                    <%--</c:if>--%>
+                </c:if>
+            </c:when>
+            <c:otherwise>
+                <div class="row signature">
+                    <h5><a href="main?command=go_to_authorization">Sign in</a> or <a href="main?command=go_to_registration">Sign up</a></h5>
+                </div>
+            </c:otherwise>
+        </c:choose>
+    </div>
+</main>
 
-        var editBox = document.createElement('input');
-        editBox.type = 'text';
-        editBox.name = 'content';
-        editBox.value = content;
-
-        var submitBtn = document.createElement('input');
-        submitBtn.type = 'submit';
-
-        var command = document.createElement('input');
-        command.type = 'hidden';
-        command.name = 'command';
-        command.value = 'answer_editing';
-
-        var answerId = document.createElement('input');
-        answerId.type = 'hidden';
-        answerId.name = 'answer_id';
-        answerId.value = current.id;
-
-        form.appendChild(editBox);
-        form.appendChild(command);
-        form.appendChild(answerId);
-        form.appendChild(document.createElement('br'));
-        form.appendChild(submitBtn);
-
-        current.parentNode.insertBefore(form, current);
-        current.style.visibility = 'hidden';
-    }
-
-</script>
-
+<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="js/popper.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
 </body>
 </html>

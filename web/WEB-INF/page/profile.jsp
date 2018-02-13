@@ -13,7 +13,10 @@
             </c:otherwise>
         </c:choose>
     </title>
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/questionnaire.css">
     <fmt:setLocale value="${sessionScope.local}"/>
     <fmt:setBundle basename="local" var="loc"/>
     <fmt:message bundle="${loc}" key="local.profile.loginfield.name" var="loginFieldName"/>
@@ -24,20 +27,74 @@
 </head>
 <body>
 
-    <jsp:include page="navbar.jsp"/>
+<jsp:include page="navbar.jsp"/>
 
-    <div align="center">
-        <div class="card">
-            <div class="label"> ${loginFieldName} : <c:out value="${requestScope.user.login}" /> </div> <br/>
-            E-mail : <c:out value="${requestScope.user.email}" /> <br/>
-            ${registrationDateFieldName} : <c:out value="${requestScope.user.registrationDate}" /> <br/>
-            <c:if test="${requestScope.user.name != null && requestScope.user.surname != null}">
-                ${nameFieldName} : <c:out value="${requestScope.user.name}" /> <br/>
-                ${surnameFieldName} : <c:out value="${requestScope.user.surname}" /> <br/>
-            </c:if>
-            ${roleFieldName} : <c:out value="${requestScope.user.role}" /> <br/>
+<main class="content">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-4 col-lg-3 col-xl-3" align="center">
+                <div class="text-center">
+                    <c:choose>
+                        <c:when test="${requestScope.user.gender == 'male'}">
+                            <img src="icons/ic_profile_male.png" class="profile_image">
+                        </c:when>
+                        <c:otherwise>
+                            <img src="icons/ic_profile_female.png" class="profile_image">
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+                <div class="row">
+                    <table class="profile_info">
+                        <thead>
+                        <tr>
+                            <td>Answers</td>
+                            <td>Questions</td>
+                            <td>Average mark</td>
+                        </tr>
+                        </thead>
+                        <tr>
+                            <td><c:out value="${requestScope.user.answersCount}" /></td>
+                            <td><c:out value="${requestScope.user.questionsCount}" /></td>
+                            <td><c:out value="${requestScope.user.averageMark}" /></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col-12 col-md-7 col-lg-8 col-xl-9 user_info">
+                <br>
+                <h1 class="h1-responsive">
+                    <c:choose>
+                        <c:when test="${requestScope.user.name != null && requestScope.user.surname != null}">
+                            <c:out value="${requestScope.user.name}" /> <c:out value="${requestScope.user.surname}" />
+                        </c:when>
+                        <c:otherwise>
+                            <c:out value="${requestScope.user.login}" />
+                        </c:otherwise>
+                    </c:choose>
+                    <c:if test="${requestScope.user.id == sessionScope.id}">
+                        <a href="main?command=go_to_profile_editing&id=${requestScope.user.id}">
+                            <img class="edit_btn" src="icons/open-iconic-master/svg/pencil.svg" alt="Edit" title="Edit">
+                        </a>
+                    </c:if>
+                </h1>
+                <c:choose>
+                    <c:when test="${requestScope.user.bio != null}">
+                        <p><c:out value="${requestScope.user.bio}"/></p>
+                    </c:when>
+                    <c:otherwise>
+                        <p class="text-muted">Apparently, this user prefers to keep an air of mystery about them.</p>
+                    </c:otherwise>
+                </c:choose>
+                <h6>Contact information:</h6>
+                <p>E-mail : <c:out value="${requestScope.user.email}" /></p>
+                <p>Gender : <c:out value="${requestScope.user.gender}"/></p>
+            </div>
         </div>
     </div>
+</main>
 
+<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="js/popper.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
 </body>
 </html>

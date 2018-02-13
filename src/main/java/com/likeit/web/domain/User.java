@@ -12,10 +12,15 @@ public class User implements Serializable {
     private String login;
     private String password;
     private String email;
+    private String gender;
     private LocalDateTime registrationDate;
     private String name;
     private String surname;
     private String bio;
+    private boolean banned;
+    private int questionsCount;
+    private int answersCount;
+    private double averageMark;
 
     public int getId() {
         return id;
@@ -57,6 +62,14 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
     public LocalDateTime getRegistrationDate() {
         return registrationDate;
     }
@@ -89,11 +102,45 @@ public class User implements Serializable {
         this.bio = bio;
     }
 
+    public void setBanned(boolean banned) {
+        this.banned = banned;
+    }
+
+    public boolean isBanned() {
+        return banned;
+    }
+
+    public int getQuestionsCount() {
+        return questionsCount;
+    }
+
+    public void setQuestionsCount(int questionsCount) {
+        this.questionsCount = questionsCount;
+    }
+
+    public int getAnswersCount() {
+        return answersCount;
+    }
+
+    public void setAnswersCount(int answersCount) {
+        this.answersCount = answersCount;
+    }
+
+    public double getAverageMark() {
+        return averageMark;
+    }
+
+    public void setAverageMark(double averageMark) {
+        this.averageMark = averageMark;
+    }
+
     @Override
     public int hashCode() {
         return 107 * id + role + login.hashCode() + password.hashCode() +
-                + email.hashCode() + registrationDate.hashCode() +
-                + name.hashCode() + surname.hashCode() + bio.hashCode();
+                + email.hashCode() + gender.hashCode() + registrationDate.hashCode() +
+                + name.hashCode() + surname.hashCode() + bio.hashCode() +
+                + Boolean.hashCode(banned) + questionsCount + answersCount +
+                + Double.hashCode(averageMark);
     }
 
     @Override
@@ -113,8 +160,10 @@ public class User implements Serializable {
         }
         return id == user.id && role == user.role && login.equals(user.login)
                 && password.equals(user.password) && email.equals(user.email)
-                && registrationDate.equals(user.registrationDate) && name.equals(user.name)
-                && surname.equals(user.surname) && bio.equals(user.bio);
+                && gender.equals(user.gender) && registrationDate.equals(user.registrationDate)
+                && name.equals(user.name) && surname.equals(user.surname) && bio.equals(user.bio)
+                && banned == user.banned && questionsCount == user.questionsCount
+                && answersCount == user.answersCount && averageMark == user.averageMark;
     }
 
     @Override
@@ -126,8 +175,13 @@ public class User implements Serializable {
                 "\nname : " + name +
                 "\nsurname : " + surname +
                 "\nemail : " + email +
+                "\ngender : " + gender +
                 "\nregistration date : " + registrationDate +
-                "\nbio" + bio;
+                "\nbio" + bio +
+                "\nis banned " + banned +
+                "\nquestions count " + questionsCount +
+                "\nanswers count " + answersCount +
+                "\naverage mark " + averageMark;
     }
 
 }

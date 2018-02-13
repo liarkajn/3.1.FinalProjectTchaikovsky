@@ -6,7 +6,6 @@ public class Vote implements Serializable {
 
     private int id;
     private User author;
-    private Answer answer;
     private int mark;
 
     public int getId() {
@@ -25,14 +24,6 @@ public class Vote implements Serializable {
         this.author = author;
     }
 
-    public Answer getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(Answer answer) {
-        this.answer = answer;
-    }
-
     public int getMark() {
         return mark;
     }
@@ -43,7 +34,7 @@ public class Vote implements Serializable {
 
     @Override
     public int hashCode() {
-        return 107 * id + author.hashCode() + answer.hashCode() + mark;
+        return 107 * id + author.hashCode() + mark;
     }
 
     @Override
@@ -62,14 +53,13 @@ public class Vote implements Serializable {
             return false;
         }
         return id == vote.id && author.equals(vote.author) &&
-                answer.equals(vote.answer) && mark == vote.mark;
+                mark == vote.mark;
     }
 
     @Override
     public String toString() {
         return "vote id : " + id +
                 "\nauthor : " + author.toString() +
-                "\nanswer : " + answer.toString() +
                 "\nmark : " + mark;
     }
 

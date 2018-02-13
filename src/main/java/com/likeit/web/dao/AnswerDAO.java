@@ -12,6 +12,7 @@ public interface AnswerDAO {
     List<Answer> readAnswersByQuestionId(int questionId) throws DAOException;
     List<Answer> readAnswersByAuthorId(int authorId) throws DAOException;
     void updateAnswer(Answer answer) throws DAOException;
+    int readAnswersCount(int authorId) throws DAOException;
     void deleteAnswer(int id) throws DAOException;
 
 }

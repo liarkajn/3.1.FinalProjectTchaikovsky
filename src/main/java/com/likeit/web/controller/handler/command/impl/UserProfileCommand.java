@@ -13,10 +13,10 @@ import java.io.IOException;
 
 public class UserProfileCommand implements Command {
 
-    private final static String PROFILE_PAGE = "/WEB-INF/page/profile.jsp";
-    private final static String ERROR_PAGE = "/likeIT?command=error&&message=";
     private final static String ID_FIELD_NAME = "id";
     private final static String USER_FIELD_NAME = "user";
+    private final static String PROFILE_PAGE = "/WEB-INF/page/profile.jsp";
+    private final static String ERROR_PAGE = "/likeIT?command=error&&message=";
     private final UserService userService = ServiceFactory.getInstance().getUserService();
 
     @Override

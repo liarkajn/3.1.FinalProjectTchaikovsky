@@ -16,6 +16,7 @@ public class UserServiceImpl implements UserService {
     private CredentialsValidation credentialsValidation = new CredentialsValidation();
     private UserValidation userValidation = new UserValidation();
 
+    @Override
     public User signIn(String login, String password) throws ServiceException {
 
         credentialsValidation.signInValidation(login, password);
@@ -32,6 +33,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
     public User adminSignIn(String login, String password) throws ServiceException {
         User user = signIn(login, password);
         if (!userValidation.isAdmin(user)) {
@@ -40,6 +42,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
     public User signUp(String login, String password, String repeatedPassword, String email) throws ServiceException {
         credentialsValidation.signUpValidation(login, password, repeatedPassword, email);
         DAOFactory daoFactory = DAOFactory.getInstance();
@@ -54,6 +57,22 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
+    public User signUp(String login, String email, String password, String repeatedPassword, String gender) throws ServiceException {
+        credentialsValidation.signUpValidation(login, password, repeatedPassword, email);
+        DAOFactory daoFactory = DAOFactory.getInstance();
+        UserDAO userDAO = daoFactory.getUserDAO();
+        User user;
+        try {
+            userDAO.createUser(login, email, password, gender);
+            user = userDAO.readUser(login, password);
+        } catch (DAOException ex) {
+            throw new ServiceException("Unable to sign up. Please, try later", ex);
+        }
+        return user;
+    }
+
+    @Override
     public User findUser(int id) throws ServiceException {
         DAOFactory daoFactory = DAOFactory.getInstance();
         UserDAO userDAO = daoFactory.getUserDAO();
@@ -67,6 +86,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
     public List<User> findUsers() throws ServiceException {
         DAOFactory daoFactory = DAOFactory.getInstance();
         UserDAO userDAO = daoFactory.getUserDAO();
@@ -79,6 +99,7 @@ public class UserServiceImpl implements UserService {
         return users;
     }
 
+    @Override
     public void editUser(User user) throws ServiceException {
         DAOFactory daoFactory = DAOFactory.getInstance();
         UserDAO userDAO = daoFactory.getUserDAO();
@@ -86,6 +107,17 @@ public class UserServiceImpl implements UserService {
             userDAO.updateUser(user);
         } catch (DAOException ex) {
             throw new ServiceException("Unable to update user with id=" + user.getId(), ex);
+        }
+    }
+
+    @Override
+    public void banUser(int id, boolean banned) throws ServiceException {
+        DAOFactory daoFactory = DAOFactory.getInstance();
+        UserDAO userDAO = daoFactory.getUserDAO();
+        try {
+            userDAO.updateUser(id, banned);
+        } catch (DAOException ex) {
+            throw new ServiceException("Unable to ban user with id=" + id, ex);
         }
     }
 

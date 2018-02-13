@@ -14,88 +14,49 @@
 <fmt:message bundle="${loc}" key="local.logoutbutton.name" var="logOutBtnName"/>
 
 <header>
-    <nav class="navbar">
-        <div class="container">
-            <a class="navbar-brand" href="questions.html">LikeIT</a>
-            <a class="nav-link active" href="#">Profile</a>
-            <a class="nav-link" href="#">My questions</a>
-            <a class="nav-link" href="#">Ask question</a>
-            <div class="user-bar">
-                <input class="search" type="text" placeholder="Search">
-                <a class="nav-link" href="#">Sign in</a> <!-- example of sign in link -->
-                <a class="nav-link" href="registration.html">Sign up</a> <!-- example of sign up link -->
-            </div>
-        </div>
-    </nav>
-</header>
+<nav class="navbar navbar-expand-lg navbar-dark bg-default no-paddings">
+    <div class="container">
+        <a class="navbar-brand" href="main?command=questions">LikeIT</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-<div align="center">
-    <div class="nav">
-        <div class="logo">
-            <form action="main" method="get">
-                <input type="submit" class="min-btn" value="LOGO"/>
-            </form>
-        </div>
-        <c:if test="${sessionScope.id == null}">
-            <div class="tab">
-                <form action="main" method="get">
-                    <input type="hidden" name="command" value="signIn"/>
-                    <input type="submit" class="min-btn" value="${signInButtonName}"/>
-                </form>
-            </div>
-            <div class="tab">
-                <form action="main" method="get">
-                    <input type="hidden" name="command" value="signUp"/>
-                    <input type="submit" class="min-btn" value="${signUpButtonName}"/>
-                </form>
-            </div>
-        </c:if>
-        <c:if test="${sessionScope.admin != null}">
-            <div class="tab">
-                <form action="main" method="get">
-                    <input type="hidden" name="command" value="administration_panel"/>
-                    <input type="submit" class="min-btn tab" value="${adminPanel}"/>
-                </form>
-            </div>
-        </c:if>
-        <c:if test="${sessionScope.id != null}">
-            <div class="tab">
-                <form action="main" method="get">
-                    <input type="hidden" name="command" value="logout"/>
-                    <input type="submit" class="min-btn tab" value="${logOutBtnName}"/>
-                </form>
-            </div>
-            <div class="tab">
-                <form action="main" method="get">
-                    <input type="hidden" name="command" value="profile"/>
-                    <input type="hidden" name="id" value="${sessionScope.id}"/>
-                    <input type="submit" class="min-btn tab" value="${profileBtnName}"/>
-                </form>
-            </div>
-            <div class="tab">
-                <form action="main" method="get">
-                    <input type="hidden" name="command" value="question_creation"/>
-                    <input type="submit" class="min-btn" value="${askBtnName}"/>
-                </form>
-            </div>
-        </c:if>
-        <div class="tab">
-            <form action="main" method="get">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <c:if test="${sessionScope.id != null}">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="main?command=profile&id=${sessionScope.id}"><c:out value="${profileBtnName}"/><span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">My questions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link " href="main?command=go_to_question_creation"><c:out value="${askBtnName}"/></a>
+                    </li>
+                </ul>
+            </c:if>
+            <form class="form-inline my-2 my-lg-0 ml-auto" action="main" method="get">
                 <input type="hidden" name="command" value="questions"/>
-                <input type="text" name="search_string" placeholder="${searchPlaceholder}"/>
-                <input type="submit" class="min-btn" value="${searchBtn}" />
+                <input class="search-input mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search_string">
             </form>
+            <ul class="navbar-nav">
+                <c:choose>
+                    <c:when test="${sessionScope.id == null}">
+                        <li class="nav-item">
+                            <a class="nav-link" href="main?command=go_to_authorization"><c:out value="${signInButtonName}"/></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="main?command=go_to_registration"><c:out value="${signUpButtonName}"/></a>
+                        </li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="nav-item">
+                            <a class="nav-link" href="main?command=logout"><c:out value="${logOutBtnName}"/></a>
+                        </li>
+                    </c:otherwise>
+                </c:choose>
+            </ul>
         </div>
     </div>
-    <div>
-        <form action="main" method="post">
-            <input type="hidden" name="local" value="ru"/>
-            <input type="submit" class="min-btn" value="Русский"/>
-        </form>
-        <form action="main" method="post">
-            <input type="hidden" name="local" value="en"/>
-            <input type="submit" class="min-btn" value="English"/>
-        </form>
-    </div>
-</div>
-
+</nav>
+</header>

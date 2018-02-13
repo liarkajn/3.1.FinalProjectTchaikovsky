@@ -4,6 +4,9 @@
 <html>
 <head>
     <title>Question</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/questionnaire.css">
 </head>
 <body>
 
@@ -28,6 +31,9 @@
         </div>
         <input type="submit" value="Edit" />
     </form>
+    <a class="btn btn-danger" href="administration?command=question_deleting&id=${question.id}">
+        Delete
+    </a>
 
 </main>
 

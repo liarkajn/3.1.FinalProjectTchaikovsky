@@ -10,6 +10,8 @@ public enum AdminCommandName {
     QUESTION,
     USER,
     QUESTION_EDITING,
-    USER_EDITING
+    QUESTION_DELETING,
+    USER_EDITING,
+    BAN
 
 }

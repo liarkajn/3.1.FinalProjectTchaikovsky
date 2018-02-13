@@ -6,10 +6,19 @@
 </head>
 <body>
 
+<jsp:include page="navbar.jsp"/>
+
+<main class="content">
+
     <div align="center">
         <label>Oops! Something went wrong. Please try again later. :)</label><br/>
         <label><c:out value="${requestScope.message}"/></label>
     </div>
+
+    <div align="center">
+    </div>
+
+</main>
 
 </body>
 </html>
