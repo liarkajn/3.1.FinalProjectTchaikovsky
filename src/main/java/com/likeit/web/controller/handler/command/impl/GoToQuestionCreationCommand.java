@@ -8,11 +8,17 @@ import java.io.IOException;
 
 public class GoToQuestionCreationCommand implements Command {
 
+    private final static String USER_ID_FIELD_NAME = "id";
     private final static String QUESTION_CREATION_PAGE = "/WEB-INF/page/question_creation.jsp";
+    private final static String QUESTIONS_PAGE = "main?command=questions";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher(QUESTION_CREATION_PAGE).forward(request, response);
+        if (request.getSession().getAttribute(USER_ID_FIELD_NAME) == null) {
+            response.sendRedirect(QUESTIONS_PAGE);
+        } else {
+            request.getRequestDispatcher(QUESTION_CREATION_PAGE).forward(request, response);
+        }
     }
 
 }

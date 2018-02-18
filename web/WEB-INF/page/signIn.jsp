@@ -8,12 +8,16 @@
     <link rel="stylesheet" type="text/css" href="css/normalize.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/questionnaire.css">
-
     <fmt:setLocale value="${sessionScope.local}"/>
     <fmt:setBundle basename="local" var="loc"/>
-    <fmt:message bundle="${loc}" key="local.login.placeholder" var="loginPlaceholder"/>
-    <fmt:message bundle="${loc}" key="local.password.placeholder" var="passwordPlaceholder"/>
-    <fmt:message bundle="${loc}" key="local.signinbutton.name" var="signInButtonName"/>
+    <fmt:message bundle="${loc}" key="local.authorization.header.message" var="signInHeader"/>
+    <fmt:message bundle="${loc}" key="local.authorization.login.placeholder" var="loginPlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.authorization.login.validation.message" var="loginInvalidMessage"/>
+    <fmt:message bundle="${loc}" key="local.authorization.password.placeholder" var="passwordPlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.authorization.password.validation.message" var="passwordInvalidMessage"/>
+    <fmt:message bundle="${loc}" key="local.authorization.nothaveaccount.message" var="isAccountExists"/>
+    <fmt:message bundle="${loc}" key="local.authorization.createanaccount.message" var="createAnAccount"/>
+    <fmt:message bundle="${loc}" key="local.authorization.signinbutton.name" var="signInButtonName"/>
 
 </head>
 <body>
@@ -27,7 +31,7 @@
                 <form method="get" action="main">
                     <input type="hidden" name="command" value="authorization"/>
                     <div class="title-row">
-                        <h1>SIGN IN</h1>
+                        <h1 class="text-uppercase">${signInHeader}</h1>
                     </div>
                     <c:if test="${requestScope.error_message != null}">
                         <div class="alert alert-danger">
@@ -36,23 +40,25 @@
                     </c:if>
                     <div class="form-row">
                         <div class="col-12 col-lg-12 mb-3">
-                            <label for="login">Login</label>
+                            <label for="login"><c:out value="${loginPlaceholder}"/></label>
                             <input type="text" class="form-control" id="login" name="login"
-                                   value="${requestScope.login}" placeholder="Login" onfocus="isValid(event)"
+                                   value="${requestScope.login}" placeholder="${loginPlaceholder}"
+                                   onfocus="isValid(event)"
                                    onkeyup="isValid(event)" pattern="^[A-Za-z][A-Za-z0-9_]{4,16}$" required>
                             <div class="invalid-feedback">
-                                Login must contain latin, numbers and special symbol ( _ )
+                                <c:out value="${loginInvalidMessage}"/>
                             </div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-12 col-lg-12 mb-3">
-                            <label for="password">Password</label>
+                            <label for="password"><c:out value="${passwordPlaceholder}"/></label>
                             <input type="password" class="form-control" id="password" name="password"
-                                   placeholder="Password" onfocus="isValid(event)" onkeyup="isValid(event)"
+                                   placeholder="${passwordPlaceholder}" onfocus="isValid(event)"
+                                   onkeyup="isValid(event)"
                                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,18}$" required>
                             <div class="invalid-feedback">
-                                The password must contain at least 1 small, 1 large Latin letters and 1 number
+                                <c:out value="${passwordInvalidMessage}"/>
                             </div>
                         </div>
                     </div>
@@ -64,10 +70,10 @@
                             </label>
                         </div>
                     </div>
-                    <p>New to LikeIT? <a href="/main?command=go_to_registration" class="form-log-in-with-existing">Create
-                        an account.</a></p>
+                    <p><c:out value="${isAccountExists}"/> <a href="/main?command=go_to_registration" class="form-log-in-with-existing">
+                        <c:out value="${createAnAccount}"/></a></p>
                     <div class="form-row">
-                        <button class="btn btn-info" type="submit">Sign in</button>
+                        <button class="btn btn-info" type="submit"><c:out value="${signInButtonName}" /></button>
                     </div>
                     <br>
                 </form>

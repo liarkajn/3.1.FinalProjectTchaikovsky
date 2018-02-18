@@ -10,7 +10,7 @@ import java.io.IOException;
 public class LogOutCommand implements Command {
 
     private final static String USER_ID_SESSION_FIELD_NAME = "id";
-    private final static String QUESTIONS_PAGE = "/main";
+    private final static String QUESTIONS_PAGE = "?command=questions";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

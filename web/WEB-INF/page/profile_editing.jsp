@@ -17,6 +17,27 @@
     <link rel="stylesheet" type="text/css" href="css/normalize.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/questionnaire.css">
+    <fmt:setLocale value="${sessionScope.local}"/>
+    <fmt:setBundle basename="local" var="loc"/>
+    <fmt:message bundle="${loc}" key="local.profile.contactinformation" var="contactInformationLabel"/>
+    <fmt:message bundle="${loc}" key="local.profile.login.label" var="loginLabel"/>
+    <fmt:message bundle="${loc}" key="local.profile.login.placeholder" var="loginPlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.profile.email.label" var="emailLabel"/>
+    <fmt:message bundle="${loc}" key="local.profile.email.placeholder" var="emailPlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.profile.personalinformation" var="personalInformationLabel"/>
+    <fmt:message bundle="${loc}" key="local.profile.name.label" var="nameLabel"/>
+    <fmt:message bundle="${loc}" key="local.profile.name.placeholder" var="namePlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.profile.surname.label" var="surnameLabel"/>
+    <fmt:message bundle="${loc}" key="local.profile.surname.placeholder" var="surnamePlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.profile.gender" var="genderLabel"/>
+    <fmt:message bundle="${loc}" key="local.profile.gender.male" var="maleOption"/>
+    <fmt:message bundle="${loc}" key="local.profile.gender.female" var="femaleOption"/>
+    <fmt:message bundle="${loc}" key="local.profile.gender.other" var="otherOption"/>
+    <fmt:message bundle="${loc}" key="local.profile.bio.label" var="bioLabel"/>
+    <fmt:message bundle="${loc}" key="local.profile.bio.placeholder" var="bioPlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.profile.editbutton" var="editBtn"/>
+    <fmt:message bundle="${loc}" key="local.registration.login.validation.message" var="loginValidation"/>
+    <fmt:message bundle="${loc}" key="local.registration.email.validation.message" var="emailValidation"/>
 </head>
 <body>
 
@@ -32,70 +53,70 @@
                         <input type="hidden" name="command" value="profile_editing"/>
                         <input type="hidden" name="id" value="${user.id}"/>
                         <div class="col-12 col-md-6">
-                            <h5 class="text-muted">Contact information: </h5>
+                            <h5 class="text-muted"><c:out value="${contactInformationLabel}" />: </h5>
                             <div class="form-row">
                                 <div class="col-12 mb-3">
-                                    <label for="login">Login</label>
+                                    <label for="login"><c:out value="${loginLabel}" /></label>
                                     <input type="text" class="form-control" id="login" name="login"
                                            value="${user.login}"
-                                           placeholder="Login" onfocus="isValid(event)" onkeyup="isValid(event)"
+                                           placeholder="${loginPlaceholder}" onfocus="isValid(event)" onkeyup="isValid(event)"
                                            pattern="^[A-Za-z][A-Za-z0-9_]{4,16}$"
                                            required>
                                     <div class="invalid-feedback">
-                                        Login must contain latin, numbers and special symbol ( _ )
+                                        <c:out value="${loginValidation}" />
                                     </div>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-12 mb-3">
-                                    <label for="email">Email</label>
+                                    <label for="email"><c:out value="${emailLabel}" /></label>
                                     <input type="email" class="form-control" id="email" name="email"
                                            value="${user.email}"
-                                           placeholder="Email" onfocus="isValid(event)" onkeyup="isValid(event)"
+                                           placeholder="${emailPlaceholder}" onfocus="isValid(event)" onkeyup="isValid(event)"
                                            pattern='[A-Za-z0-9.]+@[a-z0-9.-]+.[a-z]{2,3}'
                                            required>
                                     <div class="invalid-feedback">
-                                        Email must contain symbol @ and .
+                                        <c:out value="${emailValidation}" />
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <h5 class="text-muted">Personal information:</h5>
+                            <h5 class="text-muted"><c:out value="${personalInformationLabel}" />:</h5>
                             <div class="form-row">
                                 <div class="col-12 mb-3">
-                                    <label for="name">Name</label>
+                                    <label for="name"><c:out value="${nameLabel}" /></label>
                                     <input type="text" class="form-control" id="name" name="name" value="${user.name}"
-                                           placeholder="Name">
+                                           placeholder="${namePlaceholder}">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-12 mb-3">
-                                    <label for="surname">Surname</label>
+                                    <label for="surname"><c:out value="${surnameLabel}" /></label>
                                     <input type="text" class="form-control" id="surname" name="surname"
                                            value="${user.surname}"
-                                           placeholder="Surname">
+                                           placeholder="${surnamePlaceholder}">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group col-12">
-                                    <label for="gender">Gender</label>
+                                    <label for="gender"><c:out value="${genderLabel}" /></label>
                                     <select class="form-control" id="gender" name="gender" required>
                                         <c:choose>
-                                            <c:when test="${user.gender == 'male'}">
-                                                <option selected>Male</option>
-                                                <option>Female</option>
-                                                <option>Other</option>
+                                            <c:when test="${user.gender.toString().toLowerCase() == 'male'}">
+                                                <option selected><c:out value="${maleOption}" /></option>
+                                                <option><c:out value="${femaleOption}" /></option>
+                                                <option><c:out value="${otherOption}" /></option>
                                             </c:when>
-                                            <c:when test="${user.gender == 'female'}">
-                                                <option>Male</option>
-                                                <option selected>Female</option>
-                                                <option>Other</option>
+                                            <c:when test="${user.gender.toString().toLowerCase() == 'female'}">
+                                                <option><c:out value="${maleOption}" /></option>
+                                                <option selected><c:out value="${femaleOption}" /></option>
+                                                <option><c:out value="${otherOption}" /></option>
                                             </c:when>
                                             <c:otherwise>
-                                                <option>Male</option>
-                                                <option>Female</option>
-                                                <option selected>Other</option>
+                                                <option><c:out value="${maleOption}" /></option>
+                                                <option><c:out value="${femaleOption}" /></option>
+                                                <option selected><c:out value="${otherOption}" /></option>
                                             </c:otherwise>
                                         </c:choose>
                                     </select>
@@ -105,13 +126,13 @@
                     </div>
                     <div class="form-row">
                         <div class="col-12 mb-3">
-                            <label for="bio">About me</label>
-                            <textarea id="bio" name="bio" class="form-control" placeholder="About me"
+                            <label for="bio"><c:out value="${bioLabel}" /></label>
+                            <textarea id="bio" name="bio" class="form-control" placeholder="${bioPlaceholder}"
                                       minlength="10"><c:out value="${user.bio}"/></textarea>
                         </div>
                     </div>
                     <div class="form-row">
-                        <button class="btn btn-accept" type="submit">Edit</button>
+                        <input class="btn btn-accept" type="submit" value="${editBtn}" />
                     </div>
                     <br>
                 </form>

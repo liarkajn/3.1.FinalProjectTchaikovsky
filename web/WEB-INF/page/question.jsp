@@ -14,9 +14,18 @@
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
     <fmt:setLocale value="${sessionScope.local}"/>
     <fmt:setBundle basename="local" var="loc"/>
-    <fmt:message bundle="${loc}" key="local.question.answer.content.placeholder" var="answerPlaceholder"/>
-    <fmt:message bundle="${loc}" key="local.question.answerbutton.name" var="answerBtnName"/>
-    <fmt:message bundle="${loc}" key="local.question.editbutton.name" var="editBtn"/>
+    <fmt:message bundle="${loc}" key="local.question.author.answers.count" var="authorAnswersCount"/>
+    <fmt:message bundle="${loc}" key="local.question.author.questions.count" var="authorQuestionsCount"/>
+    <fmt:message bundle="${loc}" key="local.question.author.registered" var="authorRegisteredTime"/>
+    <fmt:message bundle="${loc}" key="local.question.author.prefix" var="authorAskedPrefix"/>
+    <fmt:message bundle="${loc}" key="local.question.time.delimiter" var="publishTimeDelimiter"/>
+    <fmt:message bundle="${loc}" key="local.question.answers.count" var="answersCount"/>
+    <fmt:message bundle="${loc}" key="local.question.authorization.signin.link" var="signInLink"/>
+    <fmt:message bundle="${loc}" key="local.question.authorization.signup.link" var="signUpLink"/>
+    <fmt:message bundle="${loc}" key="local.question.authorization.delimiter" var="authorizationDelimiter"/>
+    <fmt:message bundle="${loc}" key="local.question.answer.label" var="answerLabel"/>
+    <fmt:message bundle="${loc}" key="local.question.answer.placeholder" var="answerPlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.question.answer.answerbutton" var="answerBtn"/>
 </head>
 <body>
 
@@ -24,12 +33,21 @@
 
 <main class="content">
     <div class="container question">
+        <c:if test="${requestScope.error_message != null}">
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-danger">
+                        <c:out value="${requestScope.error_message}"/>
+                    </div>
+                </div>
+            </div>
+        </c:if>
         <div class="row">
             <div class="col-12 question_form">
                 <div class="row">
                     <div class="col-md-3 col-lg-2 author-plate-md" align="center">
                         <c:choose>
-                            <c:when test="${requestScope.question.author.gender == 'male'}">
+                            <c:when test="${requestScope.question.author.gender.toString().toLowerCase() == 'male'}">
                                 <img src="icons/ic_profile_male.png" class="profile-image">
                             </c:when>
                             <c:otherwise>
@@ -48,9 +66,9 @@
                                 </c:choose>
                             </strong>
                         </a></h6>
-                        <h6 class="author-plate-info">Answers: <c:out value="${requestScope.question.author.answersCount}" /></h6>
-                        <h6 class="author-plate-info">Questions: <c:out value="${requestScope.question.author.questionsCount}" /></h6>
-                        <h6 class="author-plate-info">Registered: <c:out value="${requestScope.question.author.registrationDate.toLocalDate()}" /></h6>
+                        <h6 class="author-plate-info"><c:out value="${authorAnswersCount}" />: <c:out value="${requestScope.question.author.answersCount}" /></h6>
+                        <h6 class="author-plate-info"><c:out value="${authorQuestionsCount}" />: <c:out value="${requestScope.question.author.questionsCount}" /></h6>
+                        <h6 class="author-plate-info"><c:out value="${authorRegisteredTime}" />: <c:out value="${requestScope.question.author.registrationDate.toLocalDate()}" /></h6>
                     </div>
                     <div class="col-12 col-md-9 col-lg-10">
                         <h1 class="h1-responsive text-muted">
@@ -61,7 +79,7 @@
                                 </a>
                             </c:if>
                         </h1>
-                        <h6 class="signature">Asked by <a href="main?command=profile&id=<c:out value="${requestScope.question.author.id}"/>">
+                        <h6 class="signature"><c:out value="${authorAskedPrefix}" /> <a href="main?command=profile&id=<c:out value="${requestScope.question.author.id}"/>">
                             <strong>
                                 <c:choose>
                                     <c:when test="${requestScope.question.author.name != null && requestScope.question.author.surname != null}">
@@ -72,13 +90,13 @@
                                     </c:otherwise>
                                 </c:choose>
                             </strong>
-                        </a>, <c:out value="${requestScope.question.publishDate.toLocalDate()}"/> at <c:out value="${requestScope.question.publishDate.toLocalTime()}"/></h6>
+                        </a>, <c:out value="${requestScope.question.publishDate.toLocalDate()}"/> <c:out value="${publishTimeDelimiter}" /> <c:out value="${requestScope.question.publishDate.toLocalTime()}"/></h6>
                         <p><c:out value="${requestScope.question.content}"/></p>
                         <div class="author-plate">
                             <div class="row">
                                 <div class="col-4">
                                     <c:choose>
-                                        <c:when test="${requestScope.question.author.gender == 'male'}">
+                                        <c:when test="${requestScope.question.author.gender.toString().toLowerCase() == 'male'}">
                                             <img src="icons/ic_profile_male.png" class="profile-image">
                                         </c:when>
                                         <c:otherwise>
@@ -88,7 +106,7 @@
                                 </div>
                                 <div class="col-8">
                                     <h6 class="signature">
-                                        <a href="main?command=profile&id=<c:out value="${answer.author.id}"/>">
+                                        <a href="main?command=profile&id=<c:out value="${requestScope.question.author.id}"/>">
                                         <strong>
                                             <c:choose>
                                                 <c:when test="${requestScope.question.author.name != null && requestScope.question.author.surname != null}">
@@ -101,9 +119,9 @@
                                         </strong>
                                         </a>
                                     </h6>
-                                    <h6 class="small">Answers: <c:out value="${requestScope.question.author.answersCount}" /></h6>
-                                    <h6 class="small">Questions: <c:out value="${requestScope.question.author.questionsCount}" /></h6>
-                                    <h5 class="small">Registered: <c:out value="${requestScope.question.author.registrationDate.toLocalDate()}" /></h5>
+                                    <h6 class="small"><c:out value="${authorAnswersCount}" />: <c:out value="${requestScope.question.author.answersCount}" /></h6>
+                                    <h6 class="small"><c:out value="${authorQuestionsCount}" />: <c:out value="${requestScope.question.author.questionsCount}" /></h6>
+                                    <h5 class="small"><c:out value="${authorRegisteredTime}" />: <c:out value="${requestScope.question.author.registrationDate.toLocalDate()}" /></h5>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +134,9 @@
         <br>
 
         <div class="row">
-            <label align="center"><h3 class="text-muted"><c:out value="${fn:length(requestScope.answers)}"/> answers:</h3></label>
+            <label align="center">
+                <h3 class="text-muted"><c:out value="${fn:length(requestScope.answers)}"/> <c:out value="${answersCount}" />:</h3>
+            </label>
         </div>
 
         <c:if test="${requestScope.answers != null}">
@@ -126,7 +146,7 @@
                         <div class="row">
                             <div class="col-md-3 col-lg-2 author-plate-md" align="center">
                                 <c:choose>
-                                    <c:when test="${answer.author.gender == 'male'}">
+                                    <c:when test="${answer.author.gender.toString().toLowerCase() == 'male'}">
                                         <img src="icons/ic_profile_male.png" class="profile-image">
                                     </c:when>
                                     <c:otherwise>
@@ -147,9 +167,9 @@
                                         </strong>
                                     </a>
                                 </h6>
-                                <h6 class="author-plate-info">Answers: <c:out value="${answer.author.answersCount}" /></h6>
-                                <h6 class="author-plate-info">Questions: <c:out value="${answer.author.questionsCount}" /></h6>
-                                <h6 class="author-plate-info">Registered: <c:out value="${answer.author.registrationDate.toLocalDate()}" /></h6>
+                                <h6 class="author-plate-info"><c:out value="${authorAnswersCount}" />: <c:out value="${answer.author.answersCount}" /></h6>
+                                <h6 class="author-plate-info"><c:out value="${authorQuestionsCount}" />: <c:out value="${answer.author.questionsCount}" /></h6>
+                                <h6 class="author-plate-info"><c:out value="${authorRegisteredTime}" />: <c:out value="${answer.author.registrationDate.toLocalDate()}" /></h6>
                             </div>
                             <div class="col-md-9 col-lg-10">
                                 <p><c:out value="${answer.content}"/></p>
@@ -181,7 +201,7 @@
                             <div class="row">
                                 <div class="col-4">
                                     <c:choose>
-                                        <c:when test="${answer.author.gender == 'male'}">
+                                        <c:when test="${answer.author.gender.toString().toLowerCase() == 'male'}">
                                             <img src="icons/ic_profile_male.png" class="profile-image">
                                         </c:when>
                                         <c:otherwise>
@@ -204,9 +224,9 @@
                                             </strong>
                                         </a>
                                     </h6>
-                                    <h6 class="author-plate-info">Answers: <c:out value="${answer.author.answersCount}" /></h6>
-                                    <h6 class="author-plate-info">Questions: <c:out value="${answer.author.questionsCount}" /></h6>
-                                    <h6 class="author-plate-info">Registered: <c:out value="${answer.author.registrationDate.toLocalDate()}" /></h6>
+                                    <h6 class="author-plate-info"><c:out value="${authorAnswersCount}" />: <c:out value="${answer.author.answersCount}" /></h6>
+                                    <h6 class="author-plate-info"><c:out value="${authorQuestionsCount}" />: <c:out value="${answer.author.questionsCount}" /></h6>
+                                    <h6 class="author-plate-info"><c:out value="${authorRegisteredTime}" />: <c:out value="${answer.author.registrationDate.toLocalDate()}" /></h6>
                                 </div>
                             </div>
                         </div>
@@ -227,36 +247,23 @@
                             <div class="col-12 col-md-8 m-auto">
                                 <input type="hidden" name="command" value="answer_creation" />
                                 <input type="hidden" name="question_id" value="${requestScope.question.id}" />
-                                <h5>YOUR ANSWER:</h5>
-                                <textarea class="answer_area" name="content" placeholder="Your answer"></textarea>
-                                <input type="submit" class="btn btn-info" value="Answer">
+                                <h5 class="text-uppercase"><c:out value="${answerLabel}" />:</h5>
+                                <textarea class="answer_area" name="content" placeholder="${answerPlaceholder}" minlength="50"></textarea>
+                                <input type="submit" class="btn btn-info" value="${answerBtn}">
                             </div>
                         </div>
                     </form>
-                    <%--<c:set var="isAnswered" scope="request" value="false" />--%>
-                    <%--<c:forEach items="${requestScope.answers}" var="answer">--%>
-                        <%--<c:if test="${answer.author.id == sessionScope.id}">--%>
-                            <%--<c:set target="${isAnswered}" value="true"/>--%>
-                        <%--</c:if>--%>
-                    <%--</c:forEach>--%>
-                    <%--<c:if test="${isAnswered == false}">--%>
-                        <%--<form action="main" method="get">--%>
-                            <%--<div class="row">--%>
-                                <%--<div class="col-12 col-md-8 m-auto">--%>
-                                    <%--<input type="hidden" name="command" value="after_answer_creation" />--%>
-                                    <%--<input type="hidden" name="question_id" value="${requestScope.question.id}" />--%>
-                                    <%--<h5>YOUR ANSWER:</h5>--%>
-                                    <%--<textarea class="answer_area" name="content" placeholder="Your answer"></textarea>--%>
-                                    <%--<input type="submit" class="btn btn-info" value="Answer">--%>
-                                <%--</div>--%>
-                            <%--</div>--%>
-                        <%--</form>--%>
-                    <%--</c:if>--%>
                 </c:if>
             </c:when>
             <c:otherwise>
                 <div class="row signature">
-                    <h5><a href="main?command=go_to_authorization">Sign in</a> or <a href="main?command=go_to_registration">Sign up</a></h5>
+                    <h5>
+                        <a href="main?command=go_to_authorization">
+                            <c:out value="${signInLink}" />
+                        </a> <c:out value="${authorizationDelimiter}" /> <a href="main?command=go_to_registration">
+                            <c:out value="${signUpLink}" />
+                        </a>
+                    </h5>
                 </div>
             </c:otherwise>
         </c:choose>

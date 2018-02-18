@@ -19,11 +19,13 @@
     <link rel="stylesheet" type="text/css" href="css/questionnaire.css">
     <fmt:setLocale value="${sessionScope.local}"/>
     <fmt:setBundle basename="local" var="loc"/>
-    <fmt:message bundle="${loc}" key="local.profile.loginfield.name" var="loginFieldName"/>
-    <fmt:message bundle="${loc}" key="local.profile.registrationdatefield.name" var="registrationDateFieldName"/>
-    <fmt:message bundle="${loc}" key="local.profile.namefield.name" var="nameFieldName"/>
-    <fmt:message bundle="${loc}" key="local.profile.surnamefield.name" var="surnameFieldName"/>
-    <fmt:message bundle="${loc}" key="local.profile.rolefield.name" var="roleFieldName"/>
+    <fmt:message bundle="${loc}" key="local.profile.answers.count" var="answersCount"/>
+    <fmt:message bundle="${loc}" key="local.profile.questions.count" var="questionsCount"/>
+    <fmt:message bundle="${loc}" key="local.profile.averagemark" var="averageMark"/>
+    <fmt:message bundle="${loc}" key="local.profile.bio.default" var="defaultBio"/>
+    <fmt:message bundle="${loc}" key="local.profile.contactinformation" var="contactInformation"/>
+    <fmt:message bundle="${loc}" key="local.profile.email" var="emailField"/>
+    <fmt:message bundle="${loc}" key="local.profile.gender" var="genderField"/>
 </head>
 <body>
 
@@ -31,11 +33,20 @@
 
 <main class="content">
     <div class="container">
+        <c:if test="${requestScope.error_message != null}">
+            <div class="row">
+                <div class="col-12">
+                    <div class="alert alert-danger">
+                        <c:out value="${requestScope.error_message}"/>
+                    </div>
+                </div>
+            </div>
+        </c:if>
         <div class="row">
             <div class="col-12 col-md-4 col-lg-3 col-xl-3" align="center">
                 <div class="text-center">
                     <c:choose>
-                        <c:when test="${requestScope.user.gender == 'male'}">
+                        <c:when test="${requestScope.user.gender.toString().toLowerCase() == 'male'}">
                             <img src="icons/ic_profile_male.png" class="profile_image">
                         </c:when>
                         <c:otherwise>
@@ -47,9 +58,9 @@
                     <table class="profile_info">
                         <thead>
                         <tr>
-                            <td>Answers</td>
-                            <td>Questions</td>
-                            <td>Average mark</td>
+                            <td><c:out value="${answersCount}" /></td>
+                            <td><c:out value="${questionsCount}" /></td>
+                            <td><c:out value="${averageMark}" /></td>
                         </tr>
                         </thead>
                         <tr>
@@ -62,7 +73,7 @@
             </div>
             <div class="col-12 col-md-7 col-lg-8 col-xl-9 user_info">
                 <br>
-                <h1 class="h1-responsive">
+                <h1 class="h1-responsive text-muted">
                     <c:choose>
                         <c:when test="${requestScope.user.name != null && requestScope.user.surname != null}">
                             <c:out value="${requestScope.user.name}" /> <c:out value="${requestScope.user.surname}" />
@@ -82,12 +93,12 @@
                         <p><c:out value="${requestScope.user.bio}"/></p>
                     </c:when>
                     <c:otherwise>
-                        <p class="text-muted">Apparently, this user prefers to keep an air of mystery about them.</p>
+                        <p class="text-muted"><c:out value="${defaultBio}" /></p>
                     </c:otherwise>
                 </c:choose>
-                <h6>Contact information:</h6>
-                <p>E-mail : <c:out value="${requestScope.user.email}" /></p>
-                <p>Gender : <c:out value="${requestScope.user.gender}"/></p>
+                <h6 class="text-muted"><c:out value="${contactInformation}" />:</h6>
+                <p><c:out value="${emailField}" /> : <c:out value="${requestScope.user.email}" /></p>
+                <p><c:out value="${genderField}" /> : <c:out value="${requestScope.user.gender.toString().toLowerCase()}"/></p>
             </div>
         </div>
     </div>

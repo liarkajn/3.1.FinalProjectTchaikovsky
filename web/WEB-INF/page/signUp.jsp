@@ -10,11 +10,22 @@
     <link rel="stylesheet" type="text/css" href="css/questionnaire.css">
     <fmt:setLocale value="${sessionScope.local}"/>
     <fmt:setBundle basename="local" var="loc"/>
-    <fmt:message bundle="${loc}" key="local.login.placeholder" var="loginPlaceholder"/>
-    <fmt:message bundle="${loc}" key="local.password.placeholder" var="passwordPlaceholder"/>
-    <fmt:message bundle="${loc}" key="local.password.repeated.placeholder" var="repeatedPasswordPlaceholder"/>
-    <fmt:message bundle="${loc}" key="local.email.placeholder" var="emailPlaceholder"/>
-    <fmt:message bundle="${loc}" key="local.signupbutton.name" var="signUpButtonName"/>
+    <fmt:message bundle="${loc}" key="local.registration.header.message" var="signUpHeader"/>
+    <fmt:message bundle="${loc}" key="local.registration.login.placeholder" var="loginPlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.registration.login.validation.message" var="loginInvalidMessage"/>
+    <fmt:message bundle="${loc}" key="local.registration.password.placeholder" var="passwordPlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.registration.password.validation.message" var="passwordInvalidMessage"/>
+    <fmt:message bundle="${loc}" key="local.registration.password.confirm.placeholder" var="confirmPasswordPlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.registration.email.placeholder" var="emailPlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.registration.email.validation.message" var="emailInvalidMessage"/>
+    <fmt:message bundle="${loc}" key="local.registration.gender.placeholder" var="genderPlaceholder"/>
+    <fmt:message bundle="${loc}" key="local.registration.gender.default" var="defaultGender"/>
+    <fmt:message bundle="${loc}" key="local.registration.gender.male" var="maleGender"/>
+    <fmt:message bundle="${loc}" key="local.registration.gender.female" var="femaleGender"/>
+    <fmt:message bundle="${loc}" key="local.registration.gender.other" var="otherGender"/>
+    <fmt:message bundle="${loc}" key="local.registration.login.message" var="loginMessage"/>
+    <fmt:message bundle="${loc}" key="local.registration.signupbutton" var="signUpButtonName"/>
+
 </head>
 <body>
 
@@ -27,63 +38,68 @@
                 <form method="get" action="main">
                     <input type="hidden" name="command" value="registration"/>
                     <div class="title-row">
-                        <h1>SIGN UP</h1>
+                        <h1 class="text-uppercase"><c:out value="${signUpHeader}" /></h1>
                     </div>
+                    <c:if test="${requestScope.error_message != null}">
+                        <div class="alert alert-danger">
+                            <c:out value="${requestScope.error_message}"/>
+                        </div>
+                    </c:if>
                     <div class="form-row">
                         <div class="col-12 mb-3">
-                            <label for="login">Login</label>
-                            <input type="text" class="form-control" id="login" name="login" placeholder="Login"
+                            <label for="login"><c:out value="${loginPlaceholder}" /></label>
+                            <input type="text" class="form-control" id="login" name="login" placeholder="${loginPlaceholder}"
                                    onfocus="isValid(event)" onkeyup="isValid(event)"
                                    pattern="^[A-Za-z][A-Za-z0-9_]{4,16}$"
                                    required>
                             <div class="invalid-feedback">
-                                Login must contain latin, numbers and special symbol ( _ )
+                                <c:out value="${loginInvalidMessage}" />
                             </div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-12 mb-3">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Email"
+                            <label for="email"><c:out value="${emailPlaceholder}" /></label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="${emailPlaceholder}"
                                    onfocus="isValid(event)" onkeyup="isValid(event)"
-                                   pattern='[A-Za-z0-9.]+@[a-z0-9.-]+.[a-z]{2,3}'
+                                   pattern='^([a-zA-Z0-9]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{1,6}))?$'
                                    required>
                             <div class="invalid-feedback">
-                                Email must contain symbol @ and .
+                                <c:out value="${emailInvalidMessage}" />
                             </div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-12 mb-3">
-                            <label for="password">Password</label>
+                            <label for="password"><c:out value="${passwordPlaceholder}" /></label>
                             <input type="password" class="form-control" id="password" name="password"
-                                   placeholder="Password" onfocus="isValid(event)" onkeyup="isValid(event)"
+                                   placeholder="${passwordPlaceholder}" onfocus="isValid(event)" onkeyup="isValid(event)"
                                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,18}$" required>
                             <div class="invalid-feedback">
-                                The password must contain at least 1 small, 1 large Latin letters and 1 number
+                                <c:out value="${passwordInvalidMessage}" />
                             </div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="col-12 mb-3">
-                            <label for="repeatedPassword">Confirm password</label>
+                            <label for="repeatedPassword"><c:out value="${confirmPasswordPlaceholder}" /></label>
                             <input type="password" class="form-control" id="repeatedPassword" name="repeatedPassword"
-                                   placeholder="Confirm password" onfocus="isValid(event)" onkeyup="isValid(event)"
+                                   placeholder="${confirmPasswordPlaceholder}" onfocus="isValid(event)" onkeyup="isValid(event)"
                                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,18}$"
                                    required>
                             <div class="invalid-feedback">
-                                The password must contain at least 1 small, 1 large Latin letters and 1 number
+                                <c:out value="${passwordInvalidMessage}" />
                             </div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-12">
-                            <label for="gender">Gender</label>
+                            <label for="gender"><c:out value="${genderPlaceholder}" /></label>
                             <select class="form-control" id="gender" name="gender" required>
-                                <option value="" disabled selected>I'm ...</option>
-                                <option>Male</option>
-                                <option>Female</option>
-                                <option>Other</option>
+                                <option value="" disabled selected><c:out value="${defaultGender}" /></option>
+                                <option><c:out value="${maleGender}" /></option>
+                                <option><c:out value="${femaleGender}" /></option>
+                                <option><c:out value="${otherGender}" /></option>
                             </select>
                         </div>
                     </div>
@@ -95,9 +111,9 @@
                             </label>
                         </div>
                     </div>
-                    <a href="/main?command=go_to_authorization" class="form-log-in-with-existing">Already have an account? Login</a>
+                    <a href="/main?command=go_to_authorization" class="form-log-in-with-existing"><c:out value="${loginMessage}" /></a>
                     <div class="form-row">
-                        <button class="btn btn-info" type="submit">Register</button>
+                        <button class="btn btn-info" type="submit"><c:out value="${signUpButtonName}" /></button>
                     </div>
                     <br>
                 </form>

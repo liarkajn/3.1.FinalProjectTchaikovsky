@@ -22,10 +22,6 @@ public class QuestionCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (!AdministratorChecker.isAdmin(request)) {
-            response.sendRedirect(AUTHORIZATION_PAGE);
-            return;
-        }
         int id = Integer.parseInt(request.getParameter(ID_FIELD_NAME));
         try {
             Question question = questionService.findQuestion(id);

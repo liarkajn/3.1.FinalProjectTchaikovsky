@@ -2,7 +2,7 @@ package com.likeit.web.controller.handler.command;
 
 public enum AdminCommandName {
 
-    SIGN_IN,
+    GO_TO_AUTHORIZATION,
     AUTHORIZATION,
     LOG_OUT,
     QUESTIONS,

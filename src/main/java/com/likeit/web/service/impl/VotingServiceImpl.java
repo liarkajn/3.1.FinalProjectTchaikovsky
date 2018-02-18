@@ -10,7 +10,7 @@ import com.likeit.web.service.impl.validation.VotingValidation;
 
 public class VotingServiceImpl implements VotingService {
 
-    private final VotingValidation votingValidation = new VotingValidation();
+    private VotingValidation votingValidation = new VotingValidation();
 
     @Override
     public void setVote(int authorId, int answerId, int mark) throws ServiceException {
@@ -29,11 +29,6 @@ public class VotingServiceImpl implements VotingService {
         } catch (DAOException ex) {
             throw new ServiceException();
         }
-    }
-
-    @Override
-    public Vote deleteVote(int id) throws ServiceException {
-        return null;
     }
 
 }

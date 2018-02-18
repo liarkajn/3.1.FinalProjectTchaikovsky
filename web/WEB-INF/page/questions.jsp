@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="utf-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
 <head>
@@ -11,6 +11,9 @@
     <link rel="stylesheet" type="text/css" href="css/questionnaire.css">
     <fmt:setLocale value="${sessionScope.local}"/>
     <fmt:setBundle basename="local" var="loc"/>
+    <fmt:message bundle="${loc}" key="local.questions.author.prefix" var="authorPrefix"/>
+    <fmt:message bundle="${loc}" key="local.questions.time.delimiter" var="timeDelimiter"/>
+    <fmt:message bundle="${loc}" key="local.questions.readmore.button" var="readMoreBtn"/>
 </head>
 <body>
 
@@ -26,7 +29,7 @@
                         <div class="col-12">
                             <div class="question-column">
                                 <h1 class="h1-responsive font-bold text-muted"><c:out value="${question.topic}"/></h1>
-                                <h6 class="signature">Written by <a
+                                <h6 class="signature"><c:out value="${authorPrefix}"/> <a
                                         href="main?command=profile&id=${question.author.id}">
                                     <strong>
                                         <c:choose>
@@ -38,12 +41,13 @@
                                                 <c:out value="${question.author.login}"/>
                                             </c:otherwise>
                                         </c:choose>
-                                    </strong></a>, <c:out value="${question.publishDate.toLocalDate()}"/> at <c:out
-                                        value="${question.publishDate.toLocalTime()}"/></h6>
+                                    </strong></a>, <c:out value="${question.publishDate.toLocalDate()}"/> <c:out
+                                        value="${timeDelimiter}"/> <c:out value="${question.publishDate.toLocalTime()}"/></h6>
                                 <div class="question">
                                     <p><c:out value="${question.content}"/></p>
                                 </div>
-                                <a href="main?command=question&id=${question.id}" class="btn btn-info">Read more</a>
+                                <a href="main?command=question&id=${question.id}" class="btn btn-info"><c:out
+                                        value="${readMoreBtn}"/></a>
                                 <hr>
                             </div>
                         </div>

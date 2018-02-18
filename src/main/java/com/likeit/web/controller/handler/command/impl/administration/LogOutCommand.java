@@ -15,10 +15,6 @@ public class LogOutCommand implements Command {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (!AdministratorChecker.isAdmin(request)) {
-            response.sendRedirect(AUTHORIZATION_PAGE);
-            return;
-        }
         request.getSession().removeAttribute(ADMIN_SESSION_ID_ATTRIBUTE_NAME);
         request.getSession().removeAttribute(ADMIN_SESSION_ROLE_ATTRIBUTE_NAME);
         response.sendRedirect(AUTHORIZATION_PAGE);

@@ -10,7 +10,7 @@ public class AdminCommandProvider {
     private Map<AdminCommandName, Command> commands = new HashMap<>();
 
     public AdminCommandProvider() {
-        commands.put(AdminCommandName.SIGN_IN, new SignInCommand());
+        commands.put(AdminCommandName.GO_TO_AUTHORIZATION, new GoToAuthorizationCommand());
         commands.put(AdminCommandName.AUTHORIZATION, new AuthorizationCommand());
         commands.put(AdminCommandName.LOG_OUT, new LogOutCommand());
         commands.put(AdminCommandName.QUESTIONS, new QuestionsCommand());

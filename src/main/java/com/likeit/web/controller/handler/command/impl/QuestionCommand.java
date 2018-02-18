@@ -5,6 +5,9 @@ import com.likeit.web.service.AnswerService;
 import com.likeit.web.service.QuestionService;
 import com.likeit.web.service.ServiceFactory;
 import com.likeit.web.service.exception.ServiceException;
+import com.likeit.web.service.exception.question.NoSuchQuestionException;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,11 +16,13 @@ import java.io.IOException;
 
 public class QuestionCommand implements Command {
 
+    private final static Logger logger = Logger.getLogger(QuestionCommand.class);
+
     private final static String QUESTION_ID_FIELD_NAME = "id";
     private final static String QUESTION_FIELD_NAME = "question";
     private final static String ANSWERS_FIELD_NAME = "answers";
     private final static String QUESTION_PAGE = "/WEB-INF/page/question.jsp";
-    private final static String ERROR_PAGE = "?command=error&&message=";
+    private final static String QUESTIONS_PAGE = "?command=questions";
     private final QuestionService questionService = ServiceFactory.getInstance().getQuestionService();
     private final AnswerService answerService = ServiceFactory.getInstance().getAnswerService();
 
@@ -28,8 +33,12 @@ public class QuestionCommand implements Command {
             request.setAttribute(QUESTION_FIELD_NAME, questionService.findQuestion(id));
             request.setAttribute(ANSWERS_FIELD_NAME, answerService.findAnswersByQuestion(id));
             request.getRequestDispatcher(QUESTION_PAGE).forward(request, response);
+        } catch (NoSuchQuestionException ex) {
+            logger.error("Unable to find question with id: " + id, ex);
+            response.sendRedirect(QUESTIONS_PAGE);
         } catch (ServiceException ex) {
-            response.sendRedirect(ERROR_PAGE + ex.getMessage());
+            logger.log(Level.FATAL, "Internal error", ex);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

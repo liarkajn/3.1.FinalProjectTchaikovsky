@@ -10,9 +10,8 @@ public interface AnswerDAO {
     void createAnswer(int authorId, int questionId, String content) throws DAOException;
     Answer readAnswerById(int id) throws DAOException;
     List<Answer> readAnswersByQuestionId(int questionId) throws DAOException;
-    List<Answer> readAnswersByAuthorId(int authorId) throws DAOException;
+    List<Answer> readAnswersByQuestionIdAndAuthorId(int questionId, int answerId) throws DAOException;
     void updateAnswer(Answer answer) throws DAOException;
     int readAnswersCount(int authorId) throws DAOException;
-    void deleteAnswer(int id) throws DAOException;
 
 }

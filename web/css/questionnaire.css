@@ -64,6 +64,16 @@
 	border-radius: .85rem;
 	padding: 5px 10px;
 }
+@media (max-width: 576px) {
+	.nav-link {
+		margin-left: 1rem;
+	}
+	.search-input {
+		width: 100%;
+		margin-left: .5rem;
+		margin-right: .5rem;
+	}
+}
 .language {
 	float: right;
 }
@@ -224,7 +234,7 @@ input[type="checkbox"]:checked:after {
 		background-color: #F5F5F5;
 		border-radius: 2px;
 	}
-	.author-plate > .profile-image {
+	.author-plate .profile-image {
 		height: 96px;
 	}
 	.author-plate-md {
@@ -290,4 +300,12 @@ error-code {
 	font-size: 8rem;
 	color: #E53935;
 	font-family: KaushanScript-Regular;
+}
+
+/* ADMINISTRATION */
+.bg-default-administration {
+	background-color: #EF5350;
+}
+.title-row-administration h1 {
+	border-bottom: 2px solid #EF5350;
 }

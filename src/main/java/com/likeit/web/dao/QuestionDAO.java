@@ -11,7 +11,6 @@ public interface QuestionDAO {
     Question readQuestion(int id) throws DAOException;
     List<Question> readQuestions(int limit, int offset) throws DAOException;
     List<Question> readQuestionsBySearchString(int limit, int offset, String searchString) throws DAOException;
-    List<Question> readQuestionsByAuthorId(int authorId) throws DAOException;
     void updateQuestion(Question question) throws DAOException;
     int readQuestionsCount() throws DAOException;
     int readQuestionsCount(String searchString) throws DAOException;

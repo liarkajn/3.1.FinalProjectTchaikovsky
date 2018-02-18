@@ -4,6 +4,8 @@ import com.likeit.web.controller.handler.command.Command;
 import com.likeit.web.service.QuestionService;
 import com.likeit.web.service.ServiceFactory;
 import com.likeit.web.service.exception.ServiceException;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +16,9 @@ import static java.lang.Math.ceil;
 
 public class QuestionsCommand implements Command {
 
-    private final static int questionsPerPage = 1;
+    private final static Logger logger = Logger.getLogger(QuestionsCommand.class);
+
+    private final static int questionsPerPage = 5;
     private final static int paginationPagesPerSide = 2;
     private final static String SEARCH_STRING_FIELD_NAME = "search_string";
     private final static String PAGE_NUMBER_FIELD_NAME = "page";
@@ -23,7 +27,6 @@ public class QuestionsCommand implements Command {
     private final static String LAST_PAGE_FIELD_NAME = "lastPage";
     private final static String OFFSET_FIELD_NAME = "offset";
     private final static String QUESTIONS_PAGE = "/WEB-INF/page/questions.jsp";
-    private final static String ERROR_PAGE = "?command=error&&message=";
     private final QuestionService questionService = ServiceFactory.getInstance().getQuestionService();
 
     @Override
@@ -42,7 +45,8 @@ public class QuestionsCommand implements Command {
             setPaginationAttribute(request, page, searchString);
             request.getRequestDispatcher(QUESTIONS_PAGE).forward(request, response);
         } catch (ServiceException ex) {
-            response.sendRedirect(ERROR_PAGE + ex.getMessage());
+            logger.log(Level.FATAL, "Internal error", ex);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

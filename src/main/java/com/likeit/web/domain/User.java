@@ -5,14 +5,12 @@ import java.time.LocalDateTime;
 
 public class User implements Serializable {
 
-    //0 - admin, 1 - moderator, 2 - just user
-
     private int id;
-    private short role;
+    private Role role;
     private String login;
     private String password;
     private String email;
-    private String gender;
+    private Gender gender;
     private LocalDateTime registrationDate;
     private String name;
     private String surname;
@@ -30,11 +28,11 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public short getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(short role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
@@ -62,11 +60,11 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
@@ -136,7 +134,7 @@ public class User implements Serializable {
 
     @Override
     public int hashCode() {
-        return 107 * id + role + login.hashCode() + password.hashCode() +
+        return 107 * id + role.hashCode() + login.hashCode() + password.hashCode() +
                 + email.hashCode() + gender.hashCode() + registrationDate.hashCode() +
                 + name.hashCode() + surname.hashCode() + bio.hashCode() +
                 + Boolean.hashCode(banned) + questionsCount + answersCount +
@@ -158,7 +156,7 @@ public class User implements Serializable {
         if (!super.equals(user)) {
             return false;
         }
-        return id == user.id && role == user.role && login.equals(user.login)
+        return id == user.id && role.equals(user.role) && login.equals(user.login)
                 && password.equals(user.password) && email.equals(user.email)
                 && gender.equals(user.gender) && registrationDate.equals(user.registrationDate)
                 && name.equals(user.name) && surname.equals(user.surname) && bio.equals(user.bio)

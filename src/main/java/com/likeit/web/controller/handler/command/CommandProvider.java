@@ -28,7 +28,6 @@ public class CommandProvider {
         commands.put(CommandName.GO_TO_PROFILE_EDITING, new GoToProfileEditingCommand());
         commands.put(CommandName.PROFILE_EDITING, new ProfileEditingCommand());
         commands.put(CommandName.LOGOUT, new LogOutCommand());
-        commands.put(CommandName.ERROR, new ErrorCommand());
     }
 
     public Command getCommand(String name) {

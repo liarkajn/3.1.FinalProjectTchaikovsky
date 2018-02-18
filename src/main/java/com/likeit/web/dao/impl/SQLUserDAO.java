@@ -4,6 +4,8 @@ import com.likeit.web.dao.*;
 import com.likeit.web.dao.connector.ConnectionPool;
 import com.likeit.web.dao.connector.ConnectionPoolException;
 import com.likeit.web.dao.exception.DAOException;
+import com.likeit.web.domain.Gender;
+import com.likeit.web.domain.Role;
 import com.likeit.web.domain.User;
 
 import java.sql.Connection;
@@ -16,13 +18,14 @@ import java.util.List;
 
 public class SQLUserDAO implements UserDAO {
 
-    private final static String createUser1 = "INSERT INTO user (login, password, email, registration_time) VALUES (?, ?, ?, ?);";
     private final static String createUser = "INSERT INTO user (login, email, password, gender, registration_time) VALUES (?, ?, ?, ?, ?);";
     private final static String getIdByLogin = "SELECT id FROM user WHERE login=?";
     private final static String readUserById = "SELECT * FROM user WHERE id=?";
+    private final static String readUserByLogin = "SELECT * FROM user WHERE login=?";
     private final static String readUserByLoginAndPassword = "SELECT * FROM user WHERE login=? AND password=?";
-    private final static String readUsers = "SELECT * FROM user";
-    private final static String readUsersBySearchString = "SELECT * FROM user WHERE login LIKE ?";
+    private final static String readUserByEmail = "SELECT * FROM user WHERE email=?";
+    private final static String readUsers = "SELECT * FROM user LIMIT ? OFFSET ?";
+    private final static String readUsersCount = "SELECT COUNT(*) FROM user";
     private final static String updateUser = "UPDATE user SET login=?, email=?, name=?, surname=?, bio=?, role=?, gender=? WHERE id=?";
 
     public SQLUserDAO() {
@@ -30,29 +33,7 @@ public class SQLUserDAO implements UserDAO {
     }
 
     @Override
-    public void createUser(String login, String password, String email) throws DAOException {
-        User user;
-        user = readUser(login, password);
-        if (user != null) {
-            throw new DAOException("User already exists");
-        }
-        try (Connection connection = ConnectionPool.getInstance().takeConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(createUser1)) {
-
-            preparedStatement.setString(1, login);
-            preparedStatement.setString(2, password);
-            preparedStatement.setString(3, email);
-            preparedStatement.setString(4, LocalDateTime.now().toString());
-
-            preparedStatement.executeUpdate();
-
-        } catch (SQLException | ConnectionPoolException e) {
-            throw new DAOException("Problems with database operations. Unable save user", e);
-        }
-    }
-
-    @Override
-    public void createUser(String login, String email, String password, String gender) throws DAOException {
+    public void createUser(String login, String email, String password, Gender gender) throws DAOException {
         User user;
         user = readUser(login, password);
         if (user != null) {
@@ -64,7 +45,7 @@ public class SQLUserDAO implements UserDAO {
             preparedStatement.setString(1, login);
             preparedStatement.setString(2, email);
             preparedStatement.setString(3, password);
-            preparedStatement.setString(4, gender);
+            preparedStatement.setString(4, gender.toString());
             preparedStatement.setString(5, LocalDateTime.now().toString());
 
             preparedStatement.executeUpdate();
@@ -120,52 +101,61 @@ public class SQLUserDAO implements UserDAO {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 user = extractUser(resultSet);
             }
-        } catch (SQLException | ConnectionPoolException e) {
+        } catch (ConnectionPoolException e) {
+            throw new DAOException("Problems with connection pool.", e);
+        } catch (SQLException e) {
             throw new DAOException("Problems with database operations. Unable find user with login : " + login, e);
         }
         return user;
     }
 
     @Override
-    public List<User> readUsers() throws DAOException {
-        List<User> result = new LinkedList<>();
+    public User readUserByLogin(String login) throws DAOException {
+        User user;
         try (Connection connection = ConnectionPool.getInstance().takeConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(readUsers)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(readUserByLogin)) {
+
+            preparedStatement.setString(1, login);
+
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                QuestionDAO questionDAO = DAOFactory.getInstance().getQuestionDAO();
-                AnswerDAO answerDAO = DAOFactory.getInstance().getAnswerDAO();
-                VotingDAO votingDAO = DAOFactory.getInstance().getVotingDAO();
-                while (resultSet.next()) {
-                    User user = new User();
-                    int userId = resultSet.getInt(1);
-                    user.setId(userId);
-                    user.setRole(resultSet.getShort(2));
-                    user.setLogin(resultSet.getString(3));
-                    user.setEmail(resultSet.getString(5));
-                    user.setName(resultSet.getString(6));
-                    user.setSurname(resultSet.getString(7));
-                    user.setRegistrationDate(resultSet.getTimestamp(8).toLocalDateTime());
-                    user.setBio(resultSet.getString(9));
-                    user.setGender(resultSet.getString(10));
-                    user.setBanned(resultSet.getBoolean(11));
-                    user.setQuestionsCount(questionDAO.readQuestionsCount(userId));
-                    user.setAnswersCount(answerDAO.readAnswersCount(userId));
-                    user.setAverageMark(votingDAO.readAverageMark(userId));
-                    result.add(user);
-                }
+                user = extractUser(resultSet);
             }
-        } catch (SQLException | ConnectionPoolException e) {
-            throw new DAOException("Problems with database operations. Unable search users", e);
+        } catch (ConnectionPoolException e) {
+            throw new DAOException("Problems with connection pool.", e);
+        } catch (SQLException e) {
+            throw new DAOException("Problems with database operations. Unable find user with login : " + login, e);
         }
-        return result;
+        return user;
     }
 
     @Override
-    public List<User> readUsers(String searchString) throws DAOException {
+    public User readUserByEmail(String email) throws DAOException {
+        User user;
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(readUserByEmail)) {
+
+            preparedStatement.setString(1, email);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                user = extractUser(resultSet);
+            }
+        } catch (ConnectionPoolException e) {
+            throw new DAOException("Problems with connection pool.", e);
+        } catch (SQLException e) {
+            throw new DAOException("Problems with database operations. Unable find user with email : " + email, e);
+        }
+        return user;
+    }
+
+    @Override
+    public List<User> readUsers(int limit, int offset) throws DAOException {
         List<User> result = new LinkedList<>();
         try (Connection connection = ConnectionPool.getInstance().takeConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(readUsersBySearchString)) {
-            preparedStatement.setString(1, "%" + searchString + "%") ;
+             PreparedStatement preparedStatement = connection.prepareStatement(readUsers)) {
+
+            preparedStatement.setInt(1, limit);
+            preparedStatement.setInt(2, offset);
+
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 QuestionDAO questionDAO = DAOFactory.getInstance().getQuestionDAO();
                 AnswerDAO answerDAO = DAOFactory.getInstance().getAnswerDAO();
@@ -174,14 +164,14 @@ public class SQLUserDAO implements UserDAO {
                     User user = new User();
                     int userId = resultSet.getInt(1);
                     user.setId(userId);
-                    user.setRole(resultSet.getShort(2));
+                    user.setRole(Role.valueOf(resultSet.getString(2).toUpperCase()));
                     user.setLogin(resultSet.getString(3));
                     user.setEmail(resultSet.getString(5));
                     user.setName(resultSet.getString(6));
                     user.setSurname(resultSet.getString(7));
                     user.setRegistrationDate(resultSet.getTimestamp(8).toLocalDateTime());
                     user.setBio(resultSet.getString(9));
-                    user.setGender(resultSet.getString(10));
+                    user.setGender(Gender.valueOf(resultSet.getString(10).toUpperCase()));
                     user.setBanned(resultSet.getBoolean(11));
                     user.setQuestionsCount(questionDAO.readQuestionsCount(userId));
                     user.setAnswersCount(answerDAO.readAnswersCount(userId));
@@ -204,20 +194,38 @@ public class SQLUserDAO implements UserDAO {
             user = new User();
             int userId = resultSet.getInt(1);
             user.setId(userId);
-            user.setRole(resultSet.getShort(2));
+            user.setRole(Role.valueOf(resultSet.getString(2).toUpperCase()));
             user.setLogin(resultSet.getString(3));
             user.setEmail(resultSet.getString(5));
             user.setName(resultSet.getString(6));
             user.setSurname(resultSet.getString(7));
             user.setRegistrationDate(resultSet.getTimestamp(8).toLocalDateTime());
             user.setBio(resultSet.getString(9));
-            user.setGender(resultSet.getString(10));
+            user.setGender(Gender.valueOf(resultSet.getString(10).toUpperCase()));
             user.setBanned(resultSet.getBoolean(11));
             user.setQuestionsCount(questionDAO.readQuestionsCount(userId));
             user.setAnswersCount(answerDAO.readAnswersCount(userId));
             user.setAverageMark(votingDAO.readAverageMark(userId));
         }
         return user;
+    }
+
+    @Override
+    public int readUsersCount() throws DAOException {
+        int count = 0;
+        try (Connection connection = ConnectionPool.getInstance().takeConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(readUsersCount)) {
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    count = resultSet.getInt(1);
+                }
+            }
+
+        } catch (SQLException | ConnectionPoolException e) {
+            throw new DAOException("Problems with database operations. Unable read users count", e);
+        }
+        return count;
     }
 
     @Override
@@ -230,8 +238,8 @@ public class SQLUserDAO implements UserDAO {
             preparedStatement.setString(3, user.getName());
             preparedStatement.setString(4, user.getSurname());
             preparedStatement.setString(5, user.getBio());
-            preparedStatement.setShort(6, user.getRole());
-            preparedStatement.setString(7, user.getGender());
+            preparedStatement.setString(6, user.getRole().toString());
+            preparedStatement.setString(7, user.getGender().toString());
             preparedStatement.setInt(8, user.getId());
 
             preparedStatement.executeUpdate();
@@ -254,11 +262,6 @@ public class SQLUserDAO implements UserDAO {
         } catch (SQLException | ConnectionPoolException e) {
             throw new DAOException("Problems with database operations. Unable ban user with id : " + id, e);
         }
-    }
-
-    @Override
-    public void deleteUser(int id) throws DAOException {
-
     }
 
 }

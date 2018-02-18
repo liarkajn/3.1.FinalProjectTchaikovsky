@@ -20,6 +20,5 @@ public enum CommandName {
     GO_TO_PROFILE_EDITING,
     PROFILE_EDITING,
     LOGOUT,
-    ERROR
 
 }

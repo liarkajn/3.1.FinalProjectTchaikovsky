@@ -1,6 +1,5 @@
 package com.likeit.web.dao.impl;
 
-import com.likeit.web.dao.AnswerDAO;
 import com.likeit.web.dao.DAOFactory;
 import com.likeit.web.dao.UserDAO;
 import com.likeit.web.dao.VotingDAO;
@@ -17,7 +16,6 @@ import java.sql.SQLException;
 public class SQLVotingDAO implements VotingDAO {
 
     private final static String createVote = "INSERT INTO mark (user_id, answer_id, value) VALUES (?, ?, ?);";
-    private final static String readVoteById = "SELECT * FROM mark WHERE id=?";
     private final static String readVoteByAnswerId = "SELECT * FROM mark WHERE answer_id=?";
     private final static String updateVote = "UPDATE mark SET value=? WHERE id=?";
     private final static String readAverageMarkByAuthorId = "SELECT ROUND(AVG(value), 2) FROM questionnaire.answer as answer INNER JOIN questionnaire.mark ON answer.id=answer_id WHERE author_id=?";
@@ -39,34 +37,6 @@ public class SQLVotingDAO implements VotingDAO {
     }
 
     @Override
-    public Vote readVote(int voteId) throws DAOException {
-        Vote vote = null;
-        try (Connection connection = ConnectionPool.getInstance().takeConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(readVoteById)) {
-
-            preparedStatement.setInt(1, voteId);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-//                AnswerDAO answerDAO = DAOFactory.getInstance().getAnswerDAO();
-                while (resultSet.next()) {
-                    vote = new Vote();
-                    vote.setId(resultSet.getInt(1));
-                    int authorId = resultSet.getInt(2);
-                    vote.setAuthor(userDAO.readUser(authorId));
-//                    int answerId = resultSet.getInt(3);
-//                    vote.setAnswer(answerDAO.readAnswerById(answerId));
-                    vote.setMark(resultSet.getInt(4));
-                }
-            }
-
-        } catch (SQLException | ConnectionPoolException e) {
-            throw new DAOException("Problems with database operations. Unable find vote with id " + voteId, e);
-        }
-        return vote;
-    }
-
-    @Override
     public Vote readVoteByAnswer(int answerId) throws DAOException {
         Vote vote = null;
         try (Connection connection = ConnectionPool.getInstance().takeConnection();
@@ -76,13 +46,11 @@ public class SQLVotingDAO implements VotingDAO {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-//                AnswerDAO answerDAO = DAOFactory.getInstance().getAnswerDAO();
                 while (resultSet.next()) {
                     vote = new Vote();
                     vote.setId(resultSet.getInt(1));
                     int authorId = resultSet.getInt(2);
                     vote.setAuthor(userDAO.readUser(authorId));
-//                    vote.setAnswer(answerDAO.readAnswerById( resultSet.getInt(3)));
                     vote.setMark(resultSet.getInt(4));
                 }
             }

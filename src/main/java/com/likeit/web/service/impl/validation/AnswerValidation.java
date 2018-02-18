@@ -2,35 +2,24 @@ package com.likeit.web.service.impl.validation;
 
 import com.likeit.web.dao.AnswerDAO;
 import com.likeit.web.dao.DAOFactory;
-import com.likeit.web.dao.QuestionDAO;
 import com.likeit.web.dao.UserDAO;
 import com.likeit.web.dao.exception.DAOException;
 import com.likeit.web.domain.Answer;
 import com.likeit.web.domain.Question;
 import com.likeit.web.domain.User;
 import com.likeit.web.service.exception.ServiceException;
+import com.likeit.web.service.exception.answer.AuthorException;
+import com.likeit.web.service.exception.answer.ContentValidationException;
 
 public class AnswerValidation {
 
+    private final static int REQUIRED_ANSWER_LENGTH = 50;
     private final UserDAO userDAO = DAOFactory.getInstance().getUserDAO();
-    private final QuestionDAO questionDAO = DAOFactory.getInstance().getQuestionDAO();
     private final AnswerDAO answerDAO = DAOFactory.getInstance().getAnswerDAO();
 
-    public boolean validateAnswerCreation(int authorId, int questionId, String content) throws ServiceException {
-        User author;
-        Question question;
-        try {
-            author = userDAO.readUser(authorId);
-        } catch (DAOException e) {
-            throw new ServiceException("Unable find user with id : " + authorId);
-        }
-        try {
-            question = questionDAO.readQuestion(questionId);
-        } catch (DAOException e) {
-            throw new ServiceException("Unable find question with id : " + questionId);
-        }
+    public boolean validateAnswer(User author, Question question, String content) throws ServiceException {
         if (author.getId() == question.getAuthor().getId()) {
-            throw new ServiceException("Unable to answer for yours question");
+            throw new AuthorException("Unable to answer for yours question");
         }
         validateContent(content);
         return true;
@@ -58,8 +47,8 @@ public class AnswerValidation {
 
     private boolean validateContent(String content) throws ServiceException {
         content = content.trim();
-        if (content.isEmpty()) {
-            throw new ServiceException("Answer doesn't have a content");
+        if (content.isEmpty() || content.length() < REQUIRED_ANSWER_LENGTH) {
+            throw new ContentValidationException("Answer is too short");
         }
         return true;
     }
